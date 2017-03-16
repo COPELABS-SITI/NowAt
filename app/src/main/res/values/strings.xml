@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">Now@</string>
+    <string name="route_created">The route was created</string>
+    <string name="route">Route</string>
+    <string name="create_route">Create route</string>
+
+    <string name="music">Music</string>
+    <string name="business">Business</string>
+    <string name="restaurants">Restaurants</string>
+    <string name="community">Community</string>
+    <string name="art">Art</string>
+    <string name="movies">Movies</string>
+    <string name="sport">Sport</string>
+    <string name="health">Health</string>
+    <string name="science">Science</string>
+    <string name="travel">Travel</string>
+    <string name="charities">Charities</string>
+    <string name="spirituality">Spirituality</string>
+    <string name="family">Family</string>
+    <string name="vacation">Vacation</string>
+    <string name="government">Government</string>
+    <string name="fashion">Fashion</string>
+    <string name="home">Home</string>
+    <string name="cars">Cars</string>
+    <string name="hobby">Hobby</string>
+    <string name="others">Others</string>
+
+    <string name="music_now">music</string>
+    <string name="business_now">business</string>
+    <string name="restaurants_now">restaurants</string>
+    <string name="community_now">community</string>
+    <string name="art_now">art</string>
+    <string name="movies_now">moviesandmultimedia</string>
+    <string name="sport_now">sportandfitness</string>
+    <string name="health_now">health</string>
+    <string name="science_now">scienceandtechnology</string>
+    <string name="travel_now">travelandoutdoor</string>
+    <string name="charities_now">charitiesandcauses</string>
+    <string name="spirituality_now">spirituality</string>
+    <string name="family_now">familyandeducation</string>
+    <string name="vacation_now">vacation</string>
+    <string name="government_now">government</string>
+    <string name="fashion_now">fashion</string>
+    <string name="home_now">homeandlifestyle</string>
+    <string name="cars_now">cars</string>
+    <string name="hobby_now">hobby</string>
+    <string name="others_now">others</string>
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context="pt.ulusofona.copelabs.now.activities.NowMainActivity">
+    <item
+        android:id="@+id/new_message"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_menu_message_plus"
+        android:title="New Message"/>
+
+    <item
+        android:id="@+id/find_file"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_menu_file_find"
+        android:title="File Explorer"/>
+
+    <item
+        android:id="@+id/user_profile"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_menu_account_settings"
+        android:title="User profile"/>
+
+    <item
+        android:id="@+id/more"
+        android:title="NFD Service">
+    </item>
+
+</menu>

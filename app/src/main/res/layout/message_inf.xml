@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/ic_message_outline" />
+
+    <TextView
+        android:id="@+id/lblmessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_avatar"
+
+        android:layout_alignParentRight="true"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        android:text="text"
+        android:layout_toEndOf="@+id/iv_avatar" />
+
+    <TextView
+        android:id="@+id/lbluser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/iv_avatar"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:text="text" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/lblmessage"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="11dp"
+        android:id="@+id/lblInterest" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblmessage"
+        android:layout_alignStart="@+id/lblInterest"
+        android:id="@+id/lbldate" />
+
+</RelativeLayout>

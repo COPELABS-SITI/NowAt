@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="interests">
+        <item>@string/music</item>
+        <item>@string/business</item>
+        <item>@string/restaurants</item>
+        <item>@string/community</item>
+        <item>@string/art</item>
+        <item>@string/movies</item>
+        <item>@string/sport</item>
+        <item>@string/health</item>
+    </string-array>
+</resources>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="pt.ulusofona.copelabs.now.activities.NowMainActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/horizontal_recycler_view"
+        android:background="#fff"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/green2"
+        android:id="@+id/textView3"
+        android:textStyle="normal|bold"
+        android:gravity="left"
+        android:layout_below="@+id/horizontal_recycler_view"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:id="@+id/spinner"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_height="50dp"
+        style="@style/Widget.AppCompat.Spinner.DropDown" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_above="@+id/spinner"
+        android:layout_alignParentStart="true"
+        android:id="@+id/editText"
+        android:layout_toStartOf="@+id/imageButton"
+        android:hint="Type your message" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/listView"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/imageButton" />
+
+    <ImageButton
+
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/backgorud_holder_item_selected"
+        app:srcCompat="@drawable/ic_send"
+        android:id="@+id/imageButton"
+        android:layout_alignTop="@+id/editText"
+        android:layout_alignParentEnd="true" />
+
+
+</RelativeLayout>
