@@ -64,8 +64,6 @@ public class NowMainActivity extends AppCompatActivity{
 
     private MessageArrayAdapter mMenssageAdapter;
 
-    private  String str;
-
     private String mUserName;
 
     private String interestSelected = "";
@@ -116,6 +114,7 @@ public class NowMainActivity extends AppCompatActivity{
 
 
         ImageButton mBtnSend = (ImageButton) findViewById(R.id.imageButton);
+
         mBtnSend.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
@@ -152,15 +151,6 @@ public class NowMainActivity extends AppCompatActivity{
                     }
 
                 });
-
-
-        if (Utils.isAppRunning(this, "edu.ucla.cs.ndnwhiteboard")) {
-            // App is running
-            Log.d("App", "Is running");
-        } else {
-            // App is not running
-            Log.d("App", "Is not running");
-        }
 
     }
     @Override
@@ -262,8 +252,7 @@ public class NowMainActivity extends AppCompatActivity{
 
                 // Store toast_message in JSON object
                 try {
-                    //jObject.put("data", input.getText().toString());
-                    jObject.put("data", str);
+                    jObject.put("data", input.getText().toString());
                     jObject.put("type", "text");
                     jObject.put("user", mUserName);
                     jObject.put("interest", interestSelected);
@@ -272,8 +261,7 @@ public class NowMainActivity extends AppCompatActivity{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //mMenssages.add(new Message(mUserName,input.getText().toString(),interestSelected,Utils.getDate()));
-                mMenssages.add(new Message(mUserName,str,interestSelected,Utils.getDate()));
+                mMenssages.add(new Message(mUserName,input.getText().toString(),interestSelected,Utils.getDate()));
 
                 mMenssageAdapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), "Message sent", Toast.LENGTH_SHORT).show();
