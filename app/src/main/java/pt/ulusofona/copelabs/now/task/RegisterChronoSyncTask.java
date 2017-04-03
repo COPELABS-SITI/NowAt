@@ -63,14 +63,6 @@ public class RegisterChronoSyncTask extends AsyncTask<Void, Void, Void> {
 
                         Log.d(TAG, "2 SyncState sequenceNo " + syncSeq);
 
-                       /* while (sync < syncSeq) {
-                            new FetchChangesTask(ndnActivity, syncPrefix + "/" + sync).execute();
-                            sync++;
-
-                        }*/
-
-                        //ndnActivity.highestRequested.put(syncPrefix, syncSeq);
-
                         Log.d(TAG, "MAP" + ndnActivity.highestRequested.values());
                         // Ignore the initial sync state and sync updates of this user
                        if (syncSeq == 0 || syncPrefix.contains(ndnActivity.UUID)) {
@@ -78,8 +70,6 @@ public class RegisterChronoSyncTask extends AsyncTask<Void, Void, Void> {
                             continue;
                         }
 
-                        //long highestSeq1 = ndnActivity.highestRequested.get(syncPrefix);
-                        //Log.d(TAG, "SyncState sequenceNo before if " + highestSeq1);
                         if (ndnActivity.highestRequested.keySet().contains(syncPrefix)) {
                             long highestSeq = ndnActivity.highestRequested.get(syncPrefix);
 

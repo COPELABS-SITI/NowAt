@@ -1,13 +1,9 @@
 package pt.ulusofona.copelabs.now.activities;
 
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +27,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import pt.ulusofona.copelabs.now.adapters.HorizontalAdapterHolder;
 import pt.ulusofona.copelabs.now.adapters.MessageArrayAdapter;
 import com.example.copelabs.now.R;
 import pt.ulusofona.copelabs.now.helpers.Utils;
@@ -43,11 +38,11 @@ import net.named_data.jndn.Face;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
 
 /**
  * Created by copelabs on 07/03/2017.
@@ -71,7 +66,7 @@ public class NowMainActivity extends AppCompatActivity{
 
     private  String str;
 
-    private String userName;
+    private String mUserName;
 
     private String interestSelected = "";
 
@@ -83,9 +78,10 @@ public class NowMainActivity extends AppCompatActivity{
 
     private Face face = new Face("localhost");
 
-    private NDNChronoSync chronoSync;
+    private NDNChronoSync mChronoSync;
 
     private int mPosition;
+
 
 
 
@@ -114,19 +110,11 @@ public class NowMainActivity extends AppCompatActivity{
 
         mHorizontalRecyclerView.setAdapter(mHorizontalAdapterHolder);
 
-       /* mHorizontalAdapterHolder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Log.i("DemoRecView", "Pulsado el elemento "+ mHorizontalRecyclerView.getChildPosition(v) );
-            }
-        });*/
-        str = UUID.randomUUID().toString();
-
-        userName = Utils.generateRandomName();
+        mUserName = Utils.generateRandomName();
 
         face = new Face("127.0.0.1");
-        Log.d(TAG, "face to string:" +face.toString());
+
+
         ImageButton mBtnSend = (ImageButton) findViewById(R.id.imageButton);
         mBtnSend.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -151,7 +139,7 @@ public class NowMainActivity extends AppCompatActivity{
         mSpinner.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(AdapterView<?> parent,
-                                               android.view.View v, int position, long id) {
+                                               View v, int position, long id) {
 
                         interestSelected = parent.getItemAtPosition(position).toString();
                         mPosition=position;
@@ -173,31 +161,6 @@ public class NowMainActivity extends AppCompatActivity{
             // App is not running
             Log.d("App", "Is not running");
         }
-
-        /*final int PROCESS_STATE_TOP = 2;
-        ActivityManager.RunningAppProcessInfo currentInfo = null;
-        Field field = null;
-        try {
-            field = ActivityManager.RunningAppProcessInfo.class.getDeclaredField("processState");
-        } catch (Exception ignored) {
-        }
-        ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> appList = am.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo app : appList) {
-            if (app.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-                    && app.importanceReasonCode == ActivityManager.RunningAppProcessInfo.REASON_UNKNOWN) {
-                Integer state = null;
-                try {
-                    state = field.getInt(app);
-                } catch (Exception e) {
-                }
-                if (state != null && state == PROCESS_STATE_TOP) {
-                    currentInfo = app;
-                    break;
-                }
-            }
-        }
-        Log.d("looog",""+currentInfo);*/
 
     }
     @Override
@@ -225,7 +188,8 @@ public class NowMainActivity extends AppCompatActivity{
         case R.id.user_profile:
 
             //add the function to perform here
-            //userName();
+            //mUserName();
+
             return(true);
 
         case R.id.more:
@@ -243,7 +207,7 @@ public class NowMainActivity extends AppCompatActivity{
 
 
         public void newchrono(){
-              chronoSync = new NDNChronoSync() {
+              mChronoSync = new NDNChronoSync() {
 
                 @Override
                 public Handler getHandler() {
@@ -260,7 +224,7 @@ public class NowMainActivity extends AppCompatActivity{
                     callback2(data);
                 }
             };
-            mChronosyncs.add(chronoSync);
+            mChronosyncs.add(mChronoSync);
 
         }
 
@@ -271,13 +235,13 @@ public class NowMainActivity extends AppCompatActivity{
         textBox.setTitle("Now@ User Name");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        input.setText(chronoSync.UUID);
+        input.setText(mChronoSync.UUID);
         textBox.setView(input);
         textBox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 // Store toast_message in JSON object
-                chronoSync.UUID = input.getText().toString();
+                mChronoSync.UUID = input.getText().toString();
                 Toast.makeText(getApplicationContext(), "Name was changed", Toast.LENGTH_SHORT).show();
             }
         });
@@ -298,16 +262,18 @@ public class NowMainActivity extends AppCompatActivity{
 
                 // Store toast_message in JSON object
                 try {
-                    jObject.put("data", input.getText().toString());
+                    //jObject.put("data", input.getText().toString());
+                    jObject.put("data", str);
                     jObject.put("type", "text");
-                    jObject.put("user", userName);
+                    jObject.put("user", mUserName);
                     jObject.put("interest", interestSelected);
                     jObject.put("date",Utils.getDate());
                     sendData(jObject.toString(), position);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mMenssages.add(new Message(userName,input.getText().toString(),interestSelected,Utils.getDate()));
+                //mMenssages.add(new Message(mUserName,input.getText().toString(),interestSelected,Utils.getDate()));
+                mMenssages.add(new Message(mUserName,str,interestSelected,Utils.getDate()));
 
                 mMenssageAdapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), "Message sent", Toast.LENGTH_SHORT).show();
@@ -319,18 +285,18 @@ public class NowMainActivity extends AppCompatActivity{
 
     public void onCreateRoute(String interest){
 
-        chronoSync.mFace=face;
-        chronoSync.UUID = str;
-        chronoSync.applicationNamePrefix="/ndn/multicast/"+interest+"/"+chronoSync.UUID;
-        chronoSync.applicationBroadcastPrefix="/ndn/broadcast/now/"+interest;
-        textName.setText("User : " + userName+ "\n" + "UUID: "+ chronoSync.UUID + "\n" + "Prefix: "+ chronoSync.applicationNamePrefix );
-        chronoSync.initialize();
+        mChronoSync.mFace=face;
+        mChronoSync.UUID = UUID.randomUUID().toString();
+        mChronoSync.applicationNamePrefix="/ndn/multicast/"+interest+"/"+ mChronoSync.UUID;
+        mChronoSync.applicationBroadcastPrefix="/ndn/multicast/now/"+interest;
+        textName.setText("User : " + mUserName + "\n" + "UUID: "+ mChronoSync.UUID + "\n" + "Prefix: "+ mChronoSync.applicationNamePrefix );
+        mChronoSync.initialize();
 
     }
 
     public void ndnStop(){
 
-        chronoSync.stop();
+        mChronoSync.stop();
     }
 
 
@@ -353,12 +319,11 @@ public class NowMainActivity extends AppCompatActivity{
     }
 
 
-
     public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.MyViewHolder> {
 
         private List<String> horizontalList;
 
-        public class MyViewHolder extends RecyclerView.ViewHolder {
+        class MyViewHolder extends RecyclerView.ViewHolder {
             TextView txtView;
 
             MyViewHolder(View view) {

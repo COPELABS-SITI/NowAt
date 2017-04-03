@@ -15,6 +15,7 @@ import net.named_data.jndn.security.SecurityException;
 import net.named_data.jndn.util.Blob;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 import pt.ulusofona.copelabs.now.helpers.Utils;
 import pt.ulusofona.copelabs.now.ndn.NDNChronoSync;
@@ -65,50 +66,7 @@ public class RegisterPrefixTask extends AsyncTask<Void, Void, String> {
 
             Name base_name = new Name(ndnActivity.applicationNamePrefix);
 
-
             insert(base_name);
-            //insert(base_name1);
-           /* try {
-                // Register the prefix
-
-                ndnActivity.mFace.registerPrefix(base_name, new OnInterestCallback() {
-                    @Override
-
-                    public void onInterest(Name prefix, Interest interest, Face face, long interestFilterId, InterestFilter filter) {
-
-                        Name interestName = interest.getName();
-                        String lastComp = interestName.get(interestName.size() - 1).toEscapedString();
-                        Log.i("NDN", "Interest received: " + lastComp);
-                        int comp = Integer.parseInt(lastComp) - 1;
-
-                        Data data = new Data();
-                        data.setName(new Name(interestName));
-                        Blob blob;
-                        if (ndnActivity.dataHistory.size() > comp) {
-                            blob = new Blob(ndnActivity.dataHistory.get(comp).getBytes());
-                            data.setContent(blob);
-                        } else {
-                            return;
-                        }
-                        try {
-                            face.putData(data);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-                }, new OnRegisterFailed() {
-                    @Override
-                    public void onRegisterFailed(Name prefix) {
-                        Log.d(TAG, "Register Prefix Task: Registration failed");
-                    }
-                });
-            } catch (IOException | SecurityException e) {
-                m_retVal = "ERROR: " + e.getMessage();
-                e.printStackTrace();
-                return m_retVal;
-            }*/
 
             return m_retVal;
 

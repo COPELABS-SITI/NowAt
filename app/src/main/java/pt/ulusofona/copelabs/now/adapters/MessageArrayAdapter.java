@@ -1,7 +1,11 @@
 package pt.ulusofona.copelabs.now.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,9 +48,17 @@ public class MessageArrayAdapter extends ArrayAdapter<Message> {
         TextView lblDate = (TextView)item.findViewById(R.id.lbldate);
         lblDate.setText(datos.get(position).getmDate()+"");
 
+        byte[] array = datos.get(position).getmMessage().getBytes();
+        byte[] decodedString = Base64.decode(array, Base64.DEFAULT);
+
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
         ImageView imgView =(ImageView)item.findViewById(R.id.iv_avatar);
+        imgView.setImageBitmap(decodedByte);
+
+        /*ImageView imgView =(ImageView)item.findViewById(R.id.iv_avatar);
         imgView.setImageResource(R.drawable.ic_message_outline);
-        imgView.setColorFilter(ContextCompat.getColor(imgView.getContext(),R.color.colorPrimary));
+        imgView.setColorFilter(ContextCompat.getColor(imgView.getContext(),R.color.colorPrimary));*/
 
         return(item);
     }
