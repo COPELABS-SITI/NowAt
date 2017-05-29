@@ -20,8 +20,6 @@ public abstract class NDNChronoSync extends NDN {
 
     public String UUID;
 
-    private String Interest;
-
     // Keeping track of what seq #'s are requested from each user
     public Map<String, Long> highestRequested;
 
@@ -46,12 +44,6 @@ public abstract class NDNChronoSync extends NDN {
 
     }
 
-
-    public void set(String prefix){
-
-
-
-    }
 
     /**
      * Bring sequence #'s up to par when a new piece of data is produced.

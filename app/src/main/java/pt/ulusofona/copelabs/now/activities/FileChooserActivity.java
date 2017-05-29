@@ -24,15 +24,15 @@ import com.example.copelabs.now.R;
 
 public class FileChooserActivity extends ListActivity {
 
-	private File currentDir;
+	private File mCurrentDir;
 
-    private FileArrayAdapter adapter;
+    private FileArrayAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currentDir = new File("/sdcard/");
-        fill(currentDir); 
+        mCurrentDir = new File("/sdcard/");
+        fill(mCurrentDir);
     }
 
     private void fill(File f) {
@@ -84,18 +84,18 @@ public class FileChooserActivity extends ListActivity {
 		 dir.addAll(fls);
 		 if(!f.getName().equalsIgnoreCase("sdcard"))
 			 dir.add(0,new FileItem("..","Parent Directory","",f.getParent(),"ic_arrow_left"));
-		 adapter = new FileArrayAdapter(FileChooserActivity.this, R.layout.file_view,dir);
-		 this.setListAdapter(adapter);
+		 mAdapter = new FileArrayAdapter(FileChooserActivity.this, R.layout.file_view,dir);
+		 this.setListAdapter(mAdapter);
     }
 
     @Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		// TODO Auto-generated method stub
 		super.onListItemClick(l, v, position, id);
-		FileItem o = adapter.getItem(position);
+		FileItem o = mAdapter.getItem(position);
 		if(o.getImage().equalsIgnoreCase("ic_folder")||o.getImage().equalsIgnoreCase("ic_file_word")){
-				currentDir = new File(o.getmPath());
-				fill(currentDir);
+				mCurrentDir = new File(o.getmPath());
+				fill(mCurrentDir);
 		}
 		else
 		{
@@ -105,7 +105,7 @@ public class FileChooserActivity extends ListActivity {
     private void onFileClick(FileItem o)
     {
     	Intent intent = new Intent();
-        intent.putExtra("GetPath",currentDir.toString());
+        intent.putExtra("GetPath", mCurrentDir.toString());
         intent.putExtra("GetFileName",o.getmName());
         setResult(RESULT_OK, intent);
         finish();

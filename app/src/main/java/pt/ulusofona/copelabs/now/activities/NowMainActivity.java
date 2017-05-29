@@ -1,10 +1,9 @@
 package pt.ulusofona.copelabs.now.activities;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,11 +26,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import pt.ulusofona.copelabs.now.adapters.HorizontalAdapterHolder;
 import pt.ulusofona.copelabs.now.adapters.MessageArrayAdapter;
 import com.example.copelabs.now.R;
 import pt.ulusofona.copelabs.now.helpers.Utils;
-import pt.ulusofona.copelabs.now.ndn.NDNChronoSync;
+import pt.ulusofona.copelabs.now.models.User;
+import pt.ulusofona.copelabs.now.ndn.ChronoSync;
 import pt.ulusofona.copelabs.now.models.Message;
+import pt.ulusofona.copelabs.now.ndn.NDNParameters;
 
 import net.named_data.jndn.Face;
 
@@ -41,6 +43,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.UUID;
 
 
@@ -48,25 +52,21 @@ import java.util.UUID;
  * Created by copelabs on 07/03/2017.
  */
 
-public class NowMainActivity extends AppCompatActivity{
+public class NowMainActivity extends AppCompatActivity implements Observer, NowMainActivityInterface{
 
     private static final int REQUEST_PATH = 1;
 
-    private TextView textName;
+    private TextView mLblNamePrefix;
 
     private String TAG = NowMainActivity.class.getSimpleName();
 
-    public Handler mHandler = new Handler();
-
     private ArrayList <Message> mMenssages = new ArrayList<>();
 
-    private ArrayList <NDNChronoSync> mChronosyncs = new ArrayList<>();
+    private ArrayList <ChronoSync> mChronosyncs = new ArrayList<>();
 
     private MessageArrayAdapter mMenssageAdapter;
 
-    private String mUserName;
-
-    private String interestSelected = "";
+    private String interestSelected = null;
 
     private Spinner mSpinner;
 
@@ -76,12 +76,11 @@ public class NowMainActivity extends AppCompatActivity{
 
     private Face face = new Face("localhost");
 
-    private NDNChronoSync mChronoSync;
-
     private int mPosition;
 
+    private User mUser;
 
-
+    private ChronoSync ChronoSync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,22 +95,21 @@ public class NowMainActivity extends AppCompatActivity{
 
         lstOpciones.setAdapter(mMenssageAdapter);
 
-        textName = (TextView) findViewById(R.id.textView3);
+        mLblNamePrefix = (TextView) findViewById(R.id.textView3);
 
         List<String> mHorizontalList = Arrays.asList(getResources().getStringArray(R.array.interests));
 
         final RecyclerView mHorizontalRecyclerView = (RecyclerView) findViewById(R.id.horizontal_recycler_view);
 
-        final HorizontalAdapter mHorizontalAdapterHolder = new HorizontalAdapter(mHorizontalList);
+        final HorizontalAdapterHolder mHorizontalAdapterHolder = new HorizontalAdapterHolder(mHorizontalList, this, this);
 
         mHorizontalRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
 
         mHorizontalRecyclerView.setAdapter(mHorizontalAdapterHolder);
 
-        mUserName = Utils.generateRandomName();
+        mUser = new User(Utils.generateRandomName());
 
         face = new Face("127.0.0.1");
-
 
         ImageButton mBtnSend = (ImageButton) findViewById(R.id.imageButton);
 
@@ -123,7 +121,7 @@ public class NowMainActivity extends AppCompatActivity{
                 {
                     Toast.makeText(getApplicationContext(), "Please select an Interest", Toast.LENGTH_SHORT).show();
                 } else{
-                    sendMessage(mPosition);
+                    sendMessage(mPosition, mUser, interestSelected);
                 }
 
             }
@@ -165,8 +163,6 @@ public class NowMainActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) { switch(item.getItemId()) {
         case R.id.new_message:
 
-            //add the function to perform here
-
             return(true);
 
         case R.id.find_file:
@@ -177,9 +173,7 @@ public class NowMainActivity extends AppCompatActivity{
 
         case R.id.user_profile:
 
-            //add the function to perform here
-            //mUserName();
-
+            showUserName(mUser);
             return(true);
 
         case R.id.more:
@@ -188,7 +182,6 @@ public class NowMainActivity extends AppCompatActivity{
             if (launchIntent != null) {
                 startActivity(launchIntent);
             }
-            //add the function to perform here
             return(true);
 
     }
@@ -196,42 +189,19 @@ public class NowMainActivity extends AppCompatActivity{
     }
 
 
-        public void newchrono(){
-              mChronoSync = new NDNChronoSync() {
-
-                @Override
-                public Handler getHandler() {
-                    return mHandler;
-                }
-
-                @Override
-                public ProgressDialog getProgressDialog() {
-                    return null;
-                }
-
-                @Override
-                public void handleDataReceived(String data) {
-                    callback2(data);
-                }
-            };
-            mChronosyncs.add(mChronoSync);
-
-        }
-
-
-    public void userName(){
+    public void showUserName(final User user){
 
         final AlertDialog.Builder textBox = new AlertDialog.Builder(this);
         textBox.setTitle("Now@ User Name");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        input.setText(mChronoSync.UUID);
+        input.setText(user.getName());
         textBox.setView(input);
         textBox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 // Store toast_message in JSON object
-                mChronoSync.UUID = input.getText().toString();
+                user.setName(input.getText().toString());
                 Toast.makeText(getApplicationContext(), "Name was changed", Toast.LENGTH_SHORT).show();
             }
         });
@@ -246,7 +216,7 @@ public class NowMainActivity extends AppCompatActivity{
 
     }
 
-    public void sendMessage(int position){
+    public void sendMessage(int position, User user, String interest){
         final JSONObject jObject = new JSONObject();  // JSON object to store toast_message
         final EditText input = (EditText)findViewById(R.id.editText);
 
@@ -254,14 +224,14 @@ public class NowMainActivity extends AppCompatActivity{
                 try {
                     jObject.put("data", input.getText().toString());
                     jObject.put("type", "text");
-                    jObject.put("user", mUserName);
-                    jObject.put("interest", interestSelected);
+                    jObject.put("user", user.getName());
+                    jObject.put("interest", interest);
                     jObject.put("date",Utils.getDate());
                     sendData(jObject.toString(), position);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mMenssages.add(new Message(mUserName,input.getText().toString(),interestSelected,Utils.getDate()));
+                mMenssages.add(new Message(user.getName(),input.getText().toString(),interest,Utils.getDate()));
 
                 mMenssageAdapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), "Message sent", Toast.LENGTH_SHORT).show();
@@ -273,24 +243,23 @@ public class NowMainActivity extends AppCompatActivity{
 
     public void onCreateRoute(String interest){
 
-        mChronoSync.mFace=face;
-        mChronoSync.UUID = UUID.randomUUID().toString();
-        mChronoSync.applicationNamePrefix="/ndn/multicast/"+interest+"/"+ mChronoSync.UUID;
-        mChronoSync.applicationBroadcastPrefix="/ndn/multicast/now/"+interest;
-        textName.setText("User : " + mUserName + "\n" + "UUID: "+ mChronoSync.UUID + "\n" + "Prefix: "+ mChronoSync.applicationNamePrefix );
-        mChronoSync.initialize();
+        NDNParameters NDN = new NDNParameters(face);
+        NDN.setUUID(UUID.randomUUID().toString());
+        NDN.setApplicationBroadcastPrefix("/ndn/multicast/now/"+interest);
+        NDN.setApplicationNamePrefix("/ndn/multicast/"+interest+"/"+ NDN.getUUID());
 
-    }
+        ChronoSync = new ChronoSync(NDN);
+        ChronoSync.addObserver(this);
+        mChronosyncs.add(ChronoSync);
 
-    public void ndnStop(){
+        mLblNamePrefix.setText("User : " + mUser.getName() + "\n" + "UUID: "+ NDN.getUUID() + "\n" + "Prefix: "+ NDN.getmApplicationNamePrefix());
 
-        mChronoSync.stop();
     }
 
 
     public void sendData(String jsonData, int position) {
 
-        mChronosyncs.get(position).dataHistory.add(jsonData);  // Add action to history
+        mChronosyncs.get(position).getDataHistory().add(jsonData);  // Add action to history
         mChronosyncs.get(position).increaseSequenceNos();
         Log.d(TAG, "Stroke generated: " + jsonData);
     }
@@ -306,81 +275,33 @@ public class NowMainActivity extends AppCompatActivity{
         }
     }
 
-
-    public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.MyViewHolder> {
-
-        private List<String> horizontalList;
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView txtView;
-
-            MyViewHolder(View view) {
-                super(view);
-                txtView = (TextView) view.findViewById(R.id.txtView);
-
-            }
-        }
-
-
-        HorizontalAdapter(List<String> horizontalList) {
-            this.horizontalList = horizontalList;
-        }
-
-        @Override
-        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.horizontal_item_view, parent, false);
-
-            return new MyViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(final MyViewHolder holder, final int position) {
-            holder.txtView.setText(horizontalList.get(position));
-
-
-            holder.txtView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-
-                    if(holder.txtView.getCurrentTextColor() == getResources().getColor(R.color.colorPrimary)) {
-
-                        holder.itemView.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.backgroud_holder_disabled, null));
-                        holder.txtView.setTextColor(getResources().getColor(R.color.white));
-
-                        // Keep track of the ChronoSync + Interest.
-                        newchrono();
-
-                        onCreateRoute(horizontalList.get(position).toLowerCase());
-                        interestSelected = horizontalList.get(position);
-                        mInterestsSelected.add(horizontalList.get(position));
-                        mSpinner.setAdapter(adapter);
-                        mSpinner.setSelection(mPosition);
-
-                    }else{
-                        mInterestsSelected.remove(horizontalList.get(position));
-                        holder.itemView.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.backgorud_holder_item_selected, null));
-                        holder.txtView.setTextColor(getResources().getColor(R.color.colorPrimary));
-                        //ndnStop();
-                    }
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return horizontalList.size();
-        }
+    @Override
+    public void update(Observable o, Object arg) {
+       if(o instanceof ChronoSync) {
+           Log.d(TAG,"Data reveived");
+           dataReceiver(String.valueOf(arg));
+           updateListView();
+       }
     }
 
+    public void updateListView(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                //stuff that updates uim
+                mMenssageAdapter.notifyDataSetChanged();
+
+            }
+        });
+    }
 
     /**
      * Helper Function to parse and draw the action mentioned in the passed JSON string
      *
      * @param string the json representation of the action to be performed
      */
-    public void callback2(String string) {
+    public void dataReceiver(String string) {
         parseJSON(string, true);
     }
 
@@ -402,15 +323,11 @@ public class NowMainActivity extends AppCompatActivity{
                     case "text": {
                         // Create a toast of the toast_message text
                         String message = jsonObject.getString("data");
-
                         String username = jsonObject.getString("user");
-
                         String interest = jsonObject.getString("interest");
-
                         String date = jsonObject.getString("date");
-                        mMenssages.add(new Message(username,message,interest,date));
 
-                        mMenssageAdapter.notifyDataSetChanged();
+                        mMenssages.add(new Message(username,message,interest,date));
 
                         break;
                     }
@@ -419,9 +336,9 @@ public class NowMainActivity extends AppCompatActivity{
                         throw new JSONException("Unrecognized string: " + string);
                 }
 
-                   /* if (addToHistory) {
-                        history.add(string);
-                    }*/
+                    if (addToHistory) {
+                        ChronoSync.getDataHistory().add(string);
+                    }
 
 
             } catch (JSONException e) {
@@ -431,4 +348,22 @@ public class NowMainActivity extends AppCompatActivity{
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void updateValueSelected(String interest) {
+        Log.d(TAG,"Interest " + interest);
+
+        if(mInterestsSelected.contains(interest)) {
+            mInterestsSelected.remove(interest);
+        } else {
+             onCreateRoute(interest.toLowerCase());
+             interestSelected = interest;
+             mInterestsSelected.add(interest);
+             mSpinner.setAdapter(adapter);
+             mSpinner.setSelection(mPosition);
+        }
+
+    }
+
+
 }
