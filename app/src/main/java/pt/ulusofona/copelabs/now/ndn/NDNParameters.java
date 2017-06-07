@@ -22,6 +22,7 @@ public class NDNParameters {
 
     private String mUUID;
 
+    private String f;
     public NDNParameters (Face face){
         mFace=face;
     }

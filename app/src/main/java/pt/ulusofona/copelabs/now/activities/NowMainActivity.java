@@ -167,8 +167,8 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
 
         case R.id.find_file:
 
-            Intent intentFileChooser = new Intent(this, FileChooserActivity.class);
-            startActivityForResult(intentFileChooser,REQUEST_PATH);
+            //Intent intentFileChooser = new Intent(this, FileChooserActivity.class);
+            //startActivityForResult(intentFileChooser,REQUEST_PATH);
             return (true);
 
         case R.id.user_profile:

@@ -33,15 +33,15 @@
         style="@style/Widget.AppCompat.Spinner.DropDown" />
 
     <EditText
+        android:id="@+id/editText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
         android:layout_above="@+id/spinner"
         android:layout_alignParentStart="true"
-        android:id="@+id/editText"
         android:layout_toStartOf="@+id/imageButton"
-        android:hint="Type your message" />
+        android:ems="10"
+        android:hint="Write your message"
+        android:inputType="textPersonName" />
 
     <ListView
         android:layout_width="match_parent"
