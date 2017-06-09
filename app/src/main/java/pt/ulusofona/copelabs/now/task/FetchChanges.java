@@ -18,12 +18,12 @@ import pt.ulusofona.copelabs.now.ndn.ChronoSync;
  * Created by copelabs on 06/04/2017.
  */
 
-public class FecthChanges extends Observable{
+public class FetchChanges extends Observable{
 
 
-    private String TAG = FecthChanges.class.getSimpleName();
+    private String TAG = FetchChanges.class.getSimpleName();
 
-    public FecthChanges(ChronoSync ChronoSync, String namePrefixStr){
+    public FetchChanges(ChronoSync ChronoSync, String namePrefixStr){
         new FetchChangesTask(ChronoSync,namePrefixStr).execute();
     }
 

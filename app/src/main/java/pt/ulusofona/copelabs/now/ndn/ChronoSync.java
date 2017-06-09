@@ -4,9 +4,6 @@ import android.util.Log;
 
 import net.named_data.jndn.sync.ChronoSync2013;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,9 +11,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import pt.ulusofona.copelabs.now.models.Message;
-import pt.ulusofona.copelabs.now.task.FecthChanges;
-import pt.ulusofona.copelabs.now.task.FetchChangesTask;
+import pt.ulusofona.copelabs.now.task.FetchChanges;
 import pt.ulusofona.copelabs.now.task.RegisterChronoSync;
 import pt.ulusofona.copelabs.now.task.RegisterPrefix;
 
@@ -54,9 +49,9 @@ public class ChronoSync extends Observable implements Observer  {
             new RegisterChronoSync(this).addObserver(this);
         }else if(o instanceof RegisterChronoSync){
             Log.d(TAG, "A change occurred");
-            new FecthChanges(this,String.valueOf(arg)).addObserver(this);
-        }else if (o instanceof FecthChanges){
-            Log.d(TAG,"New data fecths");
+            new FetchChanges(this,String.valueOf(arg)).addObserver(this);
+        }else if (o instanceof FetchChanges){
+            Log.d(TAG,"New data fetched");
             setChanged();
             notifyObservers(String.valueOf(arg));
 
