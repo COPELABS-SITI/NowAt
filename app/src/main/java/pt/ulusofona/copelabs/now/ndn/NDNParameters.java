@@ -1,18 +1,21 @@
-package pt.ulusofona.copelabs.now.ndn;
+/*
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:09 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
 
+package pt.ulusofona.copelabs.now.ndn;
 import android.util.Log;
 
 import net.named_data.jndn.Face;
 
-/**
- * Created by copelabs on 04/04/2017.
- */
 
 public class NDNParameters {
 
     private String TAG = NDNParameters.class.getSimpleName();
 
-    private Face mFace;
+    private Face mFace= new Face("127.0.0.1");
 
     private String mApplicationNamePrefix;
 
@@ -22,9 +25,8 @@ public class NDNParameters {
 
     private String mUUID;
 
-    private String f;
-    public NDNParameters (Face face){
-        mFace=face;
+    public NDNParameters (){
+
     }
     public void stop(){
         mActivityStop = true;
@@ -33,15 +35,16 @@ public class NDNParameters {
             mFace.shutdown();
             Log.d(TAG, "Shutting down face");
         }
-
     }
 
     public void setApplicationBroadcastPrefix (String applicationBroadcastPrefix){
         mApplicationBroadcastPrefix=applicationBroadcastPrefix;
     }
+
     public void setApplicationNamePrefix (String applicationNamePrefixt){
         mApplicationNamePrefix=applicationNamePrefixt;
     }
+
     public void setUUID(String UUID){
         mUUID=UUID;
     }
@@ -53,9 +56,11 @@ public class NDNParameters {
     public String getApplicationBroadcastPrefix(){
         return mApplicationBroadcastPrefix;
     }
+
     public String getmApplicationNamePrefix(){
         return mApplicationNamePrefix;
     }
+
     public Face getFace(){
         return mFace;
     }
@@ -63,6 +68,7 @@ public class NDNParameters {
     public boolean getAtivityStop(){
         return mActivityStop;
     }
+
     public String getUUID(){
         return mUUID;
     }

@@ -5,7 +5,7 @@
     android:id="@+id/custom_toast_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/backgroud_holder_disabled"
+    android:background="@drawable/backgroud_holder_enable"
     >
 
     <TextView

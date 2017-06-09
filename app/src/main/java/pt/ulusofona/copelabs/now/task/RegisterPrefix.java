@@ -20,9 +20,6 @@ import java.util.Observable;
 import pt.ulusofona.copelabs.now.helpers.Utils;
 import pt.ulusofona.copelabs.now.ndn.ChronoSync;
 
-/**
- * Created by copelabs on 05/04/2017.
- */
 
 public class RegisterPrefix extends Observable {
 

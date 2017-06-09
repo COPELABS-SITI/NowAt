@@ -14,9 +14,6 @@ import java.util.Observable;
 
 import pt.ulusofona.copelabs.now.ndn.ChronoSync;
 
-/**
- * Created by copelabs on 06/04/2017.
- */
 
 public class FetchChanges extends Observable{
 
@@ -33,8 +30,6 @@ public class FetchChanges extends Observable{
         String namePrefixStr;
         boolean m_shouldStop = false;
         private ChronoSync mChronoSync;
-
-        private String TAG = pt.ulusofona.copelabs.now.task.FetchChangesTask.class.getSimpleName();  // TAG for logging
 
 
         // Constructors

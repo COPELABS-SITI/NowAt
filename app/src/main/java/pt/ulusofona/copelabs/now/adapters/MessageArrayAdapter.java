@@ -1,3 +1,10 @@
+/*
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:06 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
+
 package pt.ulusofona.copelabs.now.adapters;
 
 import android.content.Context;
@@ -12,9 +19,6 @@ import pt.ulusofona.copelabs.now.models.Message;
 
 import java.util.ArrayList;
 
-/**
- * Created by copelabs on 19/01/2017.
- */
 
 public class MessageArrayAdapter extends ArrayAdapter<Message> {
 

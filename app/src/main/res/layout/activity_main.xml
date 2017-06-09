@@ -53,13 +53,14 @@
 
     <ImageButton
 
+        android:id="@+id/imageButton"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/backgorud_holder_item_selected"
-        app:srcCompat="@drawable/ic_send"
-        android:id="@+id/imageButton"
+        android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/editText"
-        android:layout_alignParentEnd="true" />
+        android:layout_marginRight="8dp"
+        android:background="@drawable/backgorud_holder_item_desable"
+        app:srcCompat="@drawable/ic_send" />
 
 
 </RelativeLayout>

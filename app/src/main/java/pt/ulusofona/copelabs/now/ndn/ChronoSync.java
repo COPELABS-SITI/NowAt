@@ -1,3 +1,10 @@
+/*
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:08 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
+
 package pt.ulusofona.copelabs.now.ndn;
 
 import android.util.Log;
@@ -15,9 +22,6 @@ import pt.ulusofona.copelabs.now.task.FetchChanges;
 import pt.ulusofona.copelabs.now.task.RegisterChronoSync;
 import pt.ulusofona.copelabs.now.task.RegisterPrefix;
 
-/**
- * Created by copelabs on 05/04/2017.
- */
 
 public class ChronoSync extends Observable implements Observer  {
 
@@ -31,13 +35,11 @@ public class ChronoSync extends Observable implements Observer  {
 
     private ArrayList<String> mDataHistory;
 
-    //private RegisterPrefix mRegisterPrefixTaskV1;
-
     public ChronoSync (NDNParameters ndn){
 
         mNDN=ndn;
 
-        initialize();
+        startChronoSync();
     }
 
 
@@ -58,10 +60,8 @@ public class ChronoSync extends Observable implements Observer  {
         }
     }
 
-    public void initialize() {
+    public void startChronoSync() {
 
-
-        // Start Ping sequence
         mNDN.setActivityStop(false);
 
         mDataHistory = new ArrayList<>();  // History of packets generated

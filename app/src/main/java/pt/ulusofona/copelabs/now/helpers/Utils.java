@@ -1,8 +1,12 @@
+/*
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:07 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
+
 package pt.ulusofona.copelabs.now.helpers;
 
-import android.app.ActivityManager;
-import android.content.Context;
-import android.util.Log;
 
 import net.named_data.jndn.Name;
 import net.named_data.jndn.security.KeyChain;
@@ -11,11 +15,6 @@ import net.named_data.jndn.security.identity.MemoryIdentityStorage;
 import net.named_data.jndn.security.identity.MemoryPrivateKeyStorage;
 
 import java.util.Calendar;
-import java.util.List;
-
-/**
- * Created by copelabs on 07/03/2017.
- */
 
 public abstract class Utils {
 
@@ -71,22 +70,4 @@ public abstract class Utils {
         return hora+":"+minute+":"+second;
     }
 
-    public static boolean isAppRunning(final Context context, final String packageName) {
-
-        ActivityManager activityManager;
-        activityManager = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
-        final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
-        if (procInfos != null)
-        {
-            for (final ActivityManager.RunningAppProcessInfo processInfo : procInfos) {
-                Log.d("processInfo.processName", processInfo.processName);
-                if (processInfo.processName.equals(packageName)) {
-                    return true;
-                }
-            }
-        }
-
-
-        return false;
-    }
 }

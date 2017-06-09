@@ -1,22 +1,25 @@
+/*
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:05 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
+
 package pt.ulusofona.copelabs.now.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -48,10 +51,6 @@ import java.util.Observer;
 import java.util.UUID;
 
 
-/**
- * Created by copelabs on 07/03/2017.
- */
-
 public class NowMainActivity extends AppCompatActivity implements Observer, NowMainActivityInterface{
 
     private static final int REQUEST_PATH = 1;
@@ -73,8 +72,6 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     private ArrayAdapter<String> adapter;
 
     private ArrayList<String> mInterestsSelected = new ArrayList<>();
-
-    private Face face = new Face("localhost");
 
     private int mPosition;
 
@@ -109,16 +106,15 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
 
         mUser = new User(Utils.generateRandomName());
 
-        face = new Face("127.0.0.1");
-
         ImageButton mBtnSend = (ImageButton) findViewById(R.id.imageButton);
 
         mBtnSend.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
 
-                if(interestSelected.isEmpty())
+                if(interestSelected==null)
                 {
+                    Log.d(TAG,"Please select an Interest");
                     Toast.makeText(getApplicationContext(), "Please select an Interest", Toast.LENGTH_SHORT).show();
                 } else{
                     sendMessage(mPosition, mUser, interestSelected);
@@ -243,7 +239,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
 
     public void onCreateRoute(String interest){
 
-        NDNParameters NDN = new NDNParameters(face);
+        NDNParameters NDN = new NDNParameters();
         NDN.setUUID(UUID.randomUUID().toString());
         NDN.setApplicationBroadcastPrefix("/ndn/multicast/now/"+interest);
         NDN.setApplicationNamePrefix("/ndn/multicast/"+interest+"/"+ NDN.getUUID());
@@ -353,14 +349,15 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     public void updateValueSelected(String interest) {
         Log.d(TAG,"Interest " + interest);
 
-        if(mInterestsSelected.contains(interest)) {
-            mInterestsSelected.remove(interest);
+        if(mInterestsSelected.contains("#"+interest)) {
+            mInterestsSelected.remove("#"+interest);
+            mSpinner.setAdapter(adapter);
         } else {
              onCreateRoute(interest.toLowerCase());
              interestSelected = interest;
-             mInterestsSelected.add(interest);
+             mInterestsSelected.add("#"+interest);
              mSpinner.setAdapter(adapter);
-             mSpinner.setSelection(mPosition);
+             mSpinner.setSelection(mSpinner.getFirstVisiblePosition());
         }
 
     }

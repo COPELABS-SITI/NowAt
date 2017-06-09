@@ -15,11 +15,7 @@ import java.util.Observable;
 
 import pt.ulusofona.copelabs.now.helpers.Utils;
 import pt.ulusofona.copelabs.now.ndn.ChronoSync;
-import pt.ulusofona.copelabs.now.ndn.NDNChronoSync;
 
-/**
- * Created by copelabs on 06/04/2017.
- */
 
 public class RegisterChronoSync extends Observable {
 

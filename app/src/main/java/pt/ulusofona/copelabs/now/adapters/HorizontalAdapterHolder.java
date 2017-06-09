@@ -1,3 +1,10 @@
+/*
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:06 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
+
 package pt.ulusofona.copelabs.now.adapters;
 
 
@@ -14,11 +21,6 @@ import com.example.copelabs.now.R;
 import java.util.List;
 
 import pt.ulusofona.copelabs.now.activities.NowMainActivityInterface;
-
-
-/**
- * Created by copelabs on 07/03/2017.
- */
 
 public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdapterHolder.MyViewHolder> {
 
@@ -67,7 +69,7 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
             public void onClick(View v) {
                 if(holder.txtView.getCurrentTextColor() == mContext.getResources().getColor(R.color.colorPrimary)) {
 
-                    holder.itemView.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.backgroud_holder_disabled, null));
+                    holder.itemView.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.backgroud_holder_enable, null));
                     holder.txtView.setTextColor(mContext.getResources().getColor(R.color.white));
 
                     // Keep track of the ChronoSync + Interest.
@@ -75,7 +77,7 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
 
                 }else{
 
-                    holder.itemView.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.backgorud_holder_item_selected, null));
+                    holder.itemView.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.backgorud_holder_item_desable, null));
                     holder.txtView.setTextColor(mContext.getResources().getColor(R.color.colorPrimary));
                     //ndnStop();
                     mNowMainActivityInterface.updateValueSelected(mHorizontalList.get(position));

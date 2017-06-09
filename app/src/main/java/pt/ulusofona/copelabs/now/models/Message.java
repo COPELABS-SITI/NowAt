@@ -1,8 +1,12 @@
+/*
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:08 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
+
 package pt.ulusofona.copelabs.now.models;
 
-/**
- * Created by copelabs on 19/01/2017.
- */
 
 public class Message {
     private String mUser;
@@ -28,6 +32,7 @@ public class Message {
     public String getmInterest(){
         return mInterest;
     }
+
     public String getmDate(){
         return mDate;
     }

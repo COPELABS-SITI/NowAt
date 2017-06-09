@@ -18,9 +18,7 @@ import pt.ulusofona.copelabs.now.adapters.FileArrayAdapter;
 import pt.ulusofona.copelabs.now.models.FileItem;
 import com.example.copelabs.now.R;
 
-/**
- * Created by copelabs on 07/03/2017.
- */
+
 
 public class FileChooserActivity extends ListActivity {
 
