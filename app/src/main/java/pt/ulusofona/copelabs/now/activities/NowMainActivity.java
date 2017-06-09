@@ -76,7 +76,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     private int mPosition;
 
     private User mUser;
-
+//
     private ChronoSync ChronoSync;
 
     @Override
