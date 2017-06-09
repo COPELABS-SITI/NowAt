@@ -50,13 +50,13 @@ public class ChronoSync extends Observable implements Observer  {
     public void update(Observable o, Object arg) {
 
         if( o instanceof RegisterPrefix) {
-            Log.d(TAG, "Registrado");
+            Log.d(TAG, "Registered");
             new RegisterChronoSync(this).addObserver(this);
         }else if(o instanceof RegisterChronoSync){
-            Log.d(TAG, "Ocurrio un cambio");
+            Log.d(TAG, "A change occurred");
             new FecthChanges(this,String.valueOf(arg)).addObserver(this);
         }else if (o instanceof FecthChanges){
-            Log.d(TAG,"new data");
+            Log.d(TAG,"New data fecths");
             setChanged();
             notifyObservers(String.valueOf(arg));
 
