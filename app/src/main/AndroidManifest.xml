@@ -24,11 +24,7 @@
         </activity>
         <activity android:name="pt.ulusofona.copelabs.now.activities.NowMainActivity" />
         <activity android:name="pt.ulusofona.copelabs.now.activities.FileChooserActivity" />
-        <activity android:name="pt.ulusofona.copelabs.now.activities.InformationActivity">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="pt.ulusofona.copelabs.now.activities.NowMainActivity" />
-        </activity>
+
     </application>
 
 </manifest>
