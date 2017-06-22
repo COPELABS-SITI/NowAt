@@ -1,12 +1,17 @@
-/*
+package pt.ulusofona.copelabs.now.helpers;
+/**
+ * This class is part of Now@ application. it provides general functions that are used for
+ * help specific operations through the application.
  * @version 1.0
  * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:07 PM
  *
  * @author Omar Aponte (COPELABS/ULHT)
  */
 
-package pt.ulusofona.copelabs.now.helpers;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 
 import net.named_data.jndn.Name;
 import net.named_data.jndn.security.KeyChain;
@@ -14,6 +19,7 @@ import net.named_data.jndn.security.identity.IdentityManager;
 import net.named_data.jndn.security.identity.MemoryIdentityStorage;
 import net.named_data.jndn.security.identity.MemoryPrivateKeyStorage;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public abstract class Utils {
@@ -57,9 +63,9 @@ public abstract class Utils {
     /**
      * This method provides the date
      *
-     *@return date string
+     * @return date string
      */
-    public static String getDate(){
+    public static String getDate() {
 
         Calendar c = Calendar.getInstance();
 
@@ -67,7 +73,25 @@ public abstract class Utils {
         int hora = c.get(Calendar.HOUR);
         int second = c.get(Calendar.SECOND);
 
-        return hora+":"+minute+":"+second;
+        return hora + ":" + minute + ":" + second;
     }
 
+    /**
+     * This method show a Dialog using a listview to display the information.
+     *
+     * @param listInforation List of information to display.
+     * @param context Context of the application.
+     */
+    public static void showListPrefix(ArrayList<String> listInforation, Context context, String title) {
+        String[] information = listInforation.toArray(new String[listInforation.size()]);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title)
+                .setItems(information, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // The 'which' argument contains the index position
+                        // of the selected item
+                    }
+                });
+        builder.show();
+    }
 }

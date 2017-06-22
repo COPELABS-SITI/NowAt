@@ -1,10 +1,3 @@
-/*
- * @version 1.0
- * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:06 PM
- *
- * @author Omar Aponte (COPELABS/ULHT)
- */
-
 package pt.ulusofona.copelabs.now.adapters;
 
 
@@ -21,6 +14,14 @@ import com.example.copelabs.now.R;
 import java.util.List;
 
 import pt.ulusofona.copelabs.now.activities.NowMainActivityInterface;
+/**
+ * This class is part of Now@ application. It extends to ReyclerView.Adapter. This class returns
+ * a view for each object in a collection of data.
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:06 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
 
 public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdapterHolder.MyViewHolder> {
 
@@ -44,7 +45,12 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
         }
      }
 
-
+    /**
+     * This method is hte consturctor of HorizontalAdapterHolder
+     * @param horizontalList List<String> of collection data
+     * @param context Context of the application
+     * @param nowMainActivityInterface NowMainActivityInterface
+     */
     public HorizontalAdapterHolder(List<String> horizontalList, Context context, NowMainActivityInterface nowMainActivityInterface) {
         mHorizontalList = horizontalList;
         mContext = context;
@@ -67,10 +73,10 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
         holder.txtView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(holder.txtView.getCurrentTextColor() == mContext.getResources().getColor(R.color.colorPrimary)) {
+                if(holder.txtView.getCurrentTextColor() == mContext.getResources().getColor(R.color.textDeseable)) {
 
                     holder.itemView.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.backgroud_holder_enable, null));
-                    holder.txtView.setTextColor(mContext.getResources().getColor(R.color.white));
+                    holder.txtView.setTextColor(mContext.getResources().getColor(R.color.blue));
 
                     // Keep track of the ChronoSync + Interest.
                     mNowMainActivityInterface.updateValueSelected(mHorizontalList.get(position));
@@ -78,7 +84,7 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
                 }else{
 
                     holder.itemView.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.backgorud_holder_item_desable, null));
-                    holder.txtView.setTextColor(mContext.getResources().getColor(R.color.colorPrimary));
+                    holder.txtView.setTextColor(mContext.getResources().getColor(R.color.textDeseable));
                     //ndnStop();
                     mNowMainActivityInterface.updateValueSelected(mHorizontalList.get(position));
                 }

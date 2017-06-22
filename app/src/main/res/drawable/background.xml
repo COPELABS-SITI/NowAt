@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ @version 1.0
+  ~ COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/14/17 2:26 PM
+  ~
+  ~ @author Omar Aponte (COPELABS/ULHT)
+  -->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/white" />
+
+    <item>
+        <bitmap android:src="@drawable/logo_now"
+                android:gravity="center"
+            />
+
+
+    </item>
+
+</layer-list>

@@ -94,7 +94,7 @@ public class RegisterChronoSync extends Observable {
                                     while (highestSeq <= syncSeq) {
                                         setValue(syncPrefix+"/"+highestSeq);
 
-                                        //new FetchChangesTask(ndnActivity, syncPrefix + "/" + highestSeq).execute();
+                                        new FetchChanges(mChronoSinc, syncPrefix + "/" + highestSeq);
                                         highestSeq++;
                                     }
                                     mChronoSinc.getHighestRequested().put(syncPrefix, syncSeq);
@@ -105,7 +105,7 @@ public class RegisterChronoSync extends Observable {
                             String syncNameStr = syncPrefix + "/" + syncSeq;
                             Log.d(TAG, "SYNC: " + syncNameStr + " (is Recovery: " + isRecovery + ")");
                             setValue(syncNameStr);
-                            //new FetchChangesTask(ndnActivity, syncNameStr).execute();
+                            new FetchChanges(mChronoSinc, syncNameStr);
 
                         }
 
@@ -174,28 +174,32 @@ public class RegisterChronoSync extends Observable {
         protected void onPostExecute(Void aVoid) {
             // Start the long running thread that keeps processing the events on the face every
             // few milliseconds
-            new Thread(new Runnable() {
+           new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while (!mChronoSinc.getNDN().getAtivityStop()) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException ie) {
-                            ie.printStackTrace();
-                        }
-                        try {
-                            mChronoSinc.getNDN().getFace().processEvents();
+                    while (true) {
+                        if(!mChronoSinc.getNDN().getAtivityStop()) {
+                            try {
+                                Thread.sleep(100);
+                                //Log.d(TAG, "**"+ mChronoSinc.getNDN().getmApplicationNamePrefix());
+                            } catch (InterruptedException ie) {
+                                ie.printStackTrace();
+                            }
+                            try {
+                                mChronoSinc.getNDN().getFace().processEvents();
 
-                        } catch (IOException | EncodingException e) {
-                            e.printStackTrace();
-                            mChronoSinc.getNDN().getFace().shutdown();
+                            } catch (IOException | EncodingException e) {
+                                e.printStackTrace();
+                                mChronoSinc.getNDN().getFace().shutdown();
 
+                            }
                         }
                     }
                 }
             }).start();
         }
     }
+
 
     public void setValue(String syncNameStr){
         setChanged();

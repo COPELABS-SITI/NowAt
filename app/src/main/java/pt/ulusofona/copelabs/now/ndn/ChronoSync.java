@@ -1,10 +1,3 @@
-/*
- * @version 1.0
- * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:08 PM
- *
- * @author Omar Aponte (COPELABS/ULHT)
- */
-
 package pt.ulusofona.copelabs.now.ndn;
 
 import android.util.Log;
@@ -21,6 +14,15 @@ import java.util.Observer;
 import pt.ulusofona.copelabs.now.task.FetchChanges;
 import pt.ulusofona.copelabs.now.task.RegisterChronoSync;
 import pt.ulusofona.copelabs.now.task.RegisterPrefix;
+/**
+ * ChonoSync class is based on ChonoSync2013. This class extend to observer and take car of start
+ * different tasks in order to send data and receive data on top of ChronoSync2013
+ *
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:08 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
 
 
 public class ChronoSync extends Observable implements Observer  {
@@ -35,10 +37,15 @@ public class ChronoSync extends Observable implements Observer  {
 
     private ArrayList<String> mDataHistory;
 
+    private RegisterPrefix mRegisterPrefix;
+
+    /**
+     * Constructor of Chronosync class
+     * @param ndn Object NDNParameters
+     */
     public ChronoSync (NDNParameters ndn){
 
         mNDN=ndn;
-
         startChronoSync();
     }
 
@@ -60,7 +67,11 @@ public class ChronoSync extends Observable implements Observer  {
         }
     }
 
+    /**
+     * This method start the ChonoSync process
+     */
     public void startChronoSync() {
+
 
         mNDN.setActivityStop(false);
 
@@ -69,10 +80,15 @@ public class ChronoSync extends Observable implements Observer  {
         // Keeping track of what seq #'s are requested from each user
         mHighestRequested = new HashMap<>();
 
-        new RegisterPrefix(this).addObserver(ChronoSync.this);
+        mRegisterPrefix = new RegisterPrefix(this);
+                mRegisterPrefix.addObserver(ChronoSync.this);
 
 
     }
+
+    /**
+     * This method contains a thread that keep in track the number of the sequence of ChronoSync
+     */
     public void increaseSequenceNos() {
 
         // Create a new thread to publish new sequence numbers
@@ -95,19 +111,29 @@ public class ChronoSync extends Observable implements Observer  {
         }).start();
     }
 
+    /**
+     * Get the NDNParameters
+     * @return NDNparameters Object
+     */
     public NDNParameters getNDN (){
         return mNDN;
     }
 
-
+    /**
+     * Get all the data that is synchronized by ChronoSync
+     * @return ArrayList whit the Data
+     */
     public ArrayList<String> getDataHistory(){
         return mDataHistory;
     }
 
+    /**
+     * Get HighestRequested that keeping track the sequence number fro each user
+     * @return Map
+     */
     public Map<String, Long> getHighestRequested(){
         return mHighestRequested;
     }
-
 
 
 }

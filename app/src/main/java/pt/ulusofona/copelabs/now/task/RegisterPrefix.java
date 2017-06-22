@@ -27,11 +27,12 @@ public class RegisterPrefix extends Observable {
 
     private ChronoSync  mChronoSync;
 
+
+
     public RegisterPrefix(ChronoSync chornosync){
         mChronoSync=chornosync;
         new RegisterPrefixTask().execute();
     }
-
 
     private class RegisterPrefixTask extends AsyncTask<Void, Void, String> {
 

@@ -14,7 +14,7 @@
 
     <TextView
 
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/textDeseable"
         android:textSize="16sp"
         android:padding="0sp"
         android:id="@+id/txtView"
