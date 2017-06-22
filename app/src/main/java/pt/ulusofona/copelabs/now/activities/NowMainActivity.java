@@ -319,7 +319,6 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     public void update(Observable o, Object arg) {
        if(o instanceof ChronoSync) {
            Log.d(TAG,"Data reveived");
-           //dataReceiver(String.valueOf(arg));
            parseJSONReceiver(String.valueOf(arg),true);
            updateListView();
        }
