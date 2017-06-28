@@ -5,6 +5,9 @@ Now@ relies on third-party software and libraries, licensed under the following 
 - jNDN library is licensed under conditions of
   [GNU Lesser General Public License version 3](https://github.com/named-data/jndn/blob/master/COPYING).
 
+- NDN Whiteboard is licensed under conditions of
+  [GPL version 3](https://github.com/named-data-mobile/apps-NDN-Whiteboard/blob/master/COPYING.md).
+
 The GPL license is provided below in this file.  For more information about these licenses, see
 http://www.gnu.org/licenses/
 

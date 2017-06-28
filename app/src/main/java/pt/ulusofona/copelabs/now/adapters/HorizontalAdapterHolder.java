@@ -2,6 +2,8 @@ package pt.ulusofona.copelabs.now.adapters;
 
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -69,7 +71,7 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
     public void onBindViewHolder(final HorizontalAdapterHolder.MyViewHolder holder, final int position) {
         holder.txtView.setText(mHorizontalList.get(position));
 
-
+        holder.txtView.setId(position);
         holder.txtView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +93,7 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
             }
         });
     }
+
 
 
     @Override

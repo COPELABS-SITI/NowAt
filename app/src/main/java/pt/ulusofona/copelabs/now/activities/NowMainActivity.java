@@ -97,12 +97,18 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     private Map <String, ChronoSync> mChonoSyncMap = new HashMap();
 
     private NDNParameters mNDNParmiters;
+
+    static final String MESSAGES = "messagues";
+    static final String USER = "user";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_now_main);
 
-        initialConfiguration();
+
+            initialConfiguration();
 
 
     }
@@ -415,6 +421,31 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
                 mSpinner.setSelection(mSpinner.getFirstVisiblePosition());
             }
         }
+
+        @Override
+        public void onResume(){
+            super.onResume();
+
+        }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        Log.d(TAG,"save");
+        savedInstanceState.putString(USER, mUser.getName());
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        Log.d(TAG,"Restore");
+        // Restore state members from saved instance
+        mLblNamePrefix.setText( savedInstanceState.getString(USER));
+    }
+
 
     }
 
