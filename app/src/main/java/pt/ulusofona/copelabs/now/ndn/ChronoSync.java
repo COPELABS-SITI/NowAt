@@ -1,5 +1,6 @@
 package pt.ulusofona.copelabs.now.ndn;
 
+import android.content.Context;
 import android.util.Log;
 
 import net.named_data.jndn.sync.ChronoSync2013;
@@ -55,14 +56,16 @@ public class ChronoSync extends Observable implements Observer {
      */
     private RegisterPrefix mRegisterPrefix;
 
+    private Context mContext;
     /**
      * Constructor of Chronosync class
      *
      * @param ndn Object NDNParameters
      */
-    public ChronoSync(NDNParameters ndn) {
+    public ChronoSync(NDNParameters ndn, Context context) {
         mNDN = ndn;
         startChronoSync();
+        mContext = context;
     }
 
 
@@ -118,6 +121,7 @@ public class ChronoSync extends Observable implements Observer {
             public void run() {
                 try {
                     if (mSync != null) {
+
                         while (mSync.getSequenceNo() < mDataHistory.size() && mSync.getSequenceNo() != -1) {
                             Log.d(TAG, "Seq is now: " + mSync.getSequenceNo());
                             Log.d(TAG, "DataHistoy size:" + mDataHistory.size());
@@ -159,5 +163,8 @@ public class ChronoSync extends Observable implements Observer {
         return mHighestRequested;
     }
 
+    public Context getContext(){
+        return mContext;
+    }
 
 }

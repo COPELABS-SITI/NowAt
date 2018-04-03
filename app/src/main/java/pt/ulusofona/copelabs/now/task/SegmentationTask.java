@@ -210,7 +210,7 @@ public class SegmentationTask extends AsyncTask<Void, Void, String[]> {
             mInterface.segmentationResult(mData[mSectionSent], mTotal, mSection, mName);
             mSectionSent++;
             if (mSectionSent < mTotal) {
-                dialog.setMessage("Sending... " + (mSectionSent * 100) / mTotal + "%" + "dat: lengt: " + mData.length);
+                dialog.setMessage("Sending... " + (mSectionSent * 100) / mTotal + "%");
                 new Send(mData, mSize, mSectionSent, mFileName, mData.length, mSectionSent).execute();
             } else {
                 if (dialog.isShowing()) {

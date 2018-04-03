@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,9 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +39,9 @@ import pt.ulusofona.copelabs.now.interfaces.NowMainActivityInterface;
 import pt.ulusofona.copelabs.now.models.User;
 import pt.ulusofona.copelabs.now.ndn.ChronoSync;
 import pt.ulusofona.copelabs.now.models.Message;
+import pt.ulusofona.copelabs.now.ndn.ChronoSyncManager;
 import pt.ulusofona.copelabs.now.ndn.NDNParameters;
+import pt.ulusofona.copelabs.now.ndn.NameManager;
 import pt.ulusofona.copelabs.now.task.SegmentationTask;
 
 import net.named_data.jndn.Face;
@@ -57,7 +56,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -74,24 +72,78 @@ import java.util.UUID;
 
 public class NowMainActivity extends AppCompatActivity implements Observer, NowMainActivityInterface {
 
+    /**
+     * Value used to retrieve the results from camera activity.
+     */
     static final int REQUEST_IMAGE_CAPTURE = 1;
+
+
     static final String USER = "user";
-    private TextView mLblNamePrefix;
+    /**
+     * Displays the name of the user.
+     */
+    private TextView mUserTextView;
+    /**
+     * Used for debug.
+     */
     private String TAG = NowMainActivity.class.getSimpleName();
+    /**
+     * Contains every message created by the user.
+     */
     private ArrayList<Message> mMenssages = new ArrayList<>();
+
+    /**
+     * Contains the ChronoSync created.
+     */
     private ArrayList<ChronoSync> mChronosyncs = new ArrayList<>();
+    /**
+     * Adapter used to display the messages.
+     */
     private MessageArrayAdapter mMenssageAdapter;
+    /**
+     * Interest selected in the spinner.
+     */
     private String interestSelected = null;
+    /**
+     * Spinner used to select the category to which a message belongs.
+     */
     private Spinner mSpinner;
+    /**
+     * Adapter used to display the information in the spinner.
+     */
     private ArrayAdapter<String> adapter;
+    /**
+     * List of categories selected.
+     */
     private ArrayList<String> mInterestsSelected = new ArrayList<>();
+    /**
+     * List of categories Subscribed.
+     */
     private ArrayList<String> mInteresSubscribed = new ArrayList<>();
     private ArrayList<String> mPrefixes = new ArrayList<>();
+    /**
+     * HashMap used to save the files shared in the application.
+     */
     private HashMap<String, ArrayList> mFiles = new HashMap<>();
+
+    /**
+     * Face used to communicate with NDN.
+     */
     private Face mFace;
+    /**
+     * User information.
+     */
     private User mUser;
-    private ChronoSync ChronoSync;
+
+
+    /**
+     * EditText used to write the content of the message.
+     */
     private EditText mEditText;
+
+    /**
+     *
+     */
     private Map<String, ChronoSync> mChonoSyncMap = new HashMap();
     private NDNParameters mNDNParmiters;
     private Map<String, Message> mData = new HashMap();
@@ -100,7 +152,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     private Bitmap mImageBitmap;
     private int mMessageID = 0;
     private String idMessage;
-
+    private ChronoSyncManager mChronoSyncMngr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,8 +202,8 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
         mUser = new User(Utils.generateSmallUuid());
         mEditText = (EditText) findViewById(R.id.editText);
 
-        mLblNamePrefix = (TextView) findViewById(R.id.textView3);
-        mLblNamePrefix.setText("User : " + mUser.getName());
+        mUserTextView = (TextView) findViewById(R.id.textView3);
+        mUserTextView.setText("User : " + mUser.getName());
 
         //Set up adapter for messages
         mMenssageAdapter = new MessageArrayAdapter(this, mMenssages, this);
@@ -216,6 +268,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
                     }
                 });
 
+        mChronoSyncMngr = new ChronoSyncManager();
     }
 
     @Override
@@ -236,7 +289,9 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
 
             case R.id.user_profile:
                 //Show Dialog whit username information
-                showUserName(mUser);
+                Intent intent = new Intent(this, FileChooserActivity.class);
+                startActivity(intent);
+                //showUserName(mUser);
                 return (true);
 
             case R.id.delete:
@@ -246,7 +301,6 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
                 return (true);
 
             case R.id.more:
-
                 //Start NDN-Opp. If it does not install in the device, GoolePlay will be launched to
                 //download it
                 Intent launchIntent = getPackageManager().getLaunchIntentForPackage("pt.ulusofona.copelabs.ndn");
@@ -279,7 +333,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
         textBox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 user.setName(input.getText().toString());
-                mLblNamePrefix.setText("User: " + user.getName());
+                mUserTextView.setText("User: " + user.getName());
                 Toast.makeText(getApplicationContext(), "Name was changed", Toast.LENGTH_SHORT).show();
 
             }
@@ -353,20 +407,21 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
         mNDNParmiters = new NDNParameters(mFace);
         mNDNParmiters.setUUID(UUID.randomUUID().toString());
         mNDNParmiters.setUUID(mUser.getName());
-        mNDNParmiters.setApplicationBroadcastPrefix("/ndn/broadcast/now/" + interest);
-        mNDNParmiters.setApplicationNamePrefix("/ndn/broadcast/" + interest + "/" + mNDNParmiters.getUUID());
+        mNDNParmiters.setApplicationBroadcastPrefix(NameManager.generateApplicationBroadcastPrefix(interest));
+        mNDNParmiters.setApplicationNamePrefix(NameManager.generateApplicationDataprefix(interest,mNDNParmiters.getUUID()));
 
         mPrefixes.add(mNDNParmiters.getApplicationBroadcastPrefix());
         mPrefixes.add(mNDNParmiters.getmApplicationNamePrefix());
 
-        ChronoSync = new ChronoSync(mNDNParmiters);
-        ChronoSync.addObserver(this);
+        ChronoSync chronoSync = new ChronoSync(mNDNParmiters,this);
+        chronoSync.addObserver(this);
 
-        mChronosyncs.add(ChronoSync);
+        mChronosyncs.add(chronoSync);
 
         mInteresSubscribed.add(interest);
 
-        mChonoSyncMap.put(interest, ChronoSync);
+        mChronoSyncMngr.registerChronoSync(interest,chronoSync);
+        //mChonoSyncMap.put(interest, chronoSync);
     }
 
     /**
@@ -377,9 +432,12 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
      */
     public void sendData(String jsonData, String interest) {
 
-        mChonoSyncMap.get(interest.toLowerCase()).getDataHistory().add(jsonData);
-        mChonoSyncMap.get(interest.toLowerCase()).increaseSequenceNos();
+        //mChonoSyncMap.get(interest.toLowerCase()).getDataHistory().add(jsonData);
+        //mChonoSyncMap.get(interest.toLowerCase()).increaseSequenceNos();
 
+
+        mChronoSyncMngr.getChronoSync(interest.toLowerCase()).getDataHistory().add(jsonData);
+        mChronoSyncMngr.getChronoSync(interest.toLowerCase()).increaseSequenceNos();
         Log.d(TAG, "Stroke generated: " + jsonData);
     }
 
@@ -391,7 +449,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     public void update(Observable o, Object arg) {
         if (o instanceof ChronoSync) {
             Log.d(TAG, "Data reveived size message " + mMenssages.size());
-            parseJSONReceiver(String.valueOf(arg), true);
+            parseJSONReceiver(String.valueOf(arg));
             updateListView();
         }
     }
@@ -413,11 +471,9 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     /**
      * Function to parse and draw the action mentioned in the passed JSON string
      *
-     * @param string       the json representation of the action to be performed
-     * @param addToHistory if true, add the action to history
+     * @param string       the json representation of the action to be performed.
      */
-    public void parseJSONReceiver(String string, boolean addToHistory) {
-        String interestKey;
+    public void parseJSONReceiver(String string) {
         try {
             JSONObject jsonObject = new JSONObject(string);
             try {
@@ -436,7 +492,6 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
                             String ID = jsonObject.getString("id");
                             int size = jsonObject.getInt("size");
                             int section = jsonObject.getInt("sec");
-                            interestKey = jsonObject.getString("interest");
                             String name = jsonObject.getString("name");
 
                             if (mData.containsKey(ID)) {
@@ -478,31 +533,12 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
                                     array.add(section, message);
                                     mFiles.put(name, array);
                                 }
-                                /*dataReceived = dataReceived + message;
-                                Log.d(TAG, "Size of: " + dataReceived.length() + "");
-
-                                byte[] array = dataReceived.getBytes();
-                                byte[] decodeString = Base64.decode(array, Base64.DEFAULT);
-                                Log.d(TAG, "Decoding" + decodeString);
-                                if (dataReceived.length() == size) {
-                                    bitmap = BitmapFactory.decodeByteArray(decodeString, 0, decodeString.length);
-                                    ImageView mimg;
-                                    dataReceived = "";
-                                    mMenssages.add(0, new Message(username, message, interest, date, ID, bitmap));
-                                    updateListView();
-                                }*/
                             }
                             break;
                         }
                         default:
                             throw new JSONException("Unrecognized string: " + string);
                     }
-
-                    if (addToHistory) {
-                        //ChronoSync.getDataHistory().add(string);
-                        mChonoSyncMap.get(interestKey.toLowerCase()).getDataHistory().add(string);
-                    }
-
                 }
             } catch (JSONException e) {
                 Log.d(TAG, "JSON string error: " + string);
@@ -526,16 +562,19 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
             Log.d(TAG, "Delete");
             mInterestsSelected.remove("#" + interest);
             mSpinner.setAdapter(adapter);
+            mChronoSyncMngr.getChronoSync(interest.toLowerCase()).getNDN().setActivityStop(true);
+            //mChonoSyncMap.get(interest.toLowerCase()).getNDN().setActivityStop(true);
 
-            mChonoSyncMap.get(interest.toLowerCase()).getNDN().setActivityStop(true);
-            mChonoSyncMap.get(interest.toLowerCase()).mSync.shutdown();
-            mChonoSyncMap.remove(interest.toLowerCase());
+            //mChonoSyncMap.get(interest.toLowerCase()).mSync.shutdown();
+            //mChonoSyncMap.remove(interest.toLowerCase());
             //mNDNParmiters.setActivityStop(true);
 
         } else if (mInteresSubscribed.contains(interest.toLowerCase())) {
             Log.d(TAG, "Contains");
             //mNDNParmiters.setActivityStop(false);
-            mChonoSyncMap.get(interest.toLowerCase()).getNDN().setActivityStop(false);
+            //subscribeInterest(interest.toLowerCase());
+            //mChonoSyncMap.get(interest.toLowerCase()).getNDN().setActivityStop(false);
+            mChronoSyncMngr.getChronoSync(interest.toLowerCase()).getNDN().setActivityStop(false);
             interestSelected = interest;
             mInterestsSelected.add("#" + interest);
             mSpinner.setAdapter(adapter);
@@ -557,7 +596,6 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
             mMenssages.get(message).setSave(false);
         } else {
             mMenssages.get(message).setSave(true);
-
         }
         mMenssageAdapter.notifyDataSetChanged();
 
@@ -619,7 +657,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
 
         Log.d(TAG, "Restore");
         // Restore state members from saved instance
-        mLblNamePrefix.setText(savedInstanceState.getString(USER));
+        mUserTextView.setText(savedInstanceState.getString(USER));
     }
 
     /**

@@ -1,5 +1,6 @@
 package pt.ulusofona.copelabs.now.task;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -49,6 +50,11 @@ public class RegisterChronoSync extends Observable {
     public class RegisterChronoSyncTask extends AsyncTask<Void, Void, Void> implements ChronoSync2013.OnInitialized, OnRegisterFailed, ChronoSync2013.OnReceivedSyncState{
 
         /**
+         * Dialog used to show the progress of the task.
+         */
+        private ProgressDialog dialog;
+
+        /**
          * Number of attempts to register the chronoSync.
          */
         private int attempt = 1;
@@ -82,6 +88,17 @@ public class RegisterChronoSync extends Observable {
             this.mChronoSinc = ChronoSync;
         }
 
+        /**
+         * This method displays the dialog used to show the progress of the task.
+         */
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(mChronoSinc.getContext());
+            dialog.setMessage("Registering prefixes...");
+            dialog.setIndeterminate(true);
+            dialog.show();
+            super.onPreExecute();
+        }
         /**
          * This method register the ChronoSync2013.
          * @param params
@@ -117,6 +134,10 @@ public class RegisterChronoSync extends Observable {
         protected void onPostExecute(Void aVoid) {
             // Start the long running thread that keeps processing the events on the face every
             // few milliseconds
+
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
            new Thread(new Runnable() {
                 @Override
                 public void run() {
