@@ -8,7 +8,12 @@
 package pt.ulusofona.copelabs.now.ndn;
 
 /**
- * Created by copelabs on 03/04/2018.
+ * This class contains all the names used  for tha application, also is used to create the prefixes
+ * based on the categories selected by the user.
+ * Created by copelabs on 03/04/2018.@author Omar Aponte (COPELABS/ULHT)
+ *
+ * @version 1.0
+ *          COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:05 PM
  */
 
 public abstract class NameManager {
@@ -28,13 +33,26 @@ public abstract class NameManager {
      */
     public static final String GENERAL_PREFIX = "/ndn";
 
-
-    public static String generateApplicationDataprefix(String interest, String identifier){
-        return GENERAL_PREFIX+APPLICATION_STRATEGY+"/"+interest+"/"+identifier;
+    /**
+     * This method generates a name using the local information and the infromation of the
+     * category selected by the user.
+     *
+     * @param interest   Interest name selected by the user.
+     * @param identifier Identifier of the user.
+     * @return ApplicationDataPrefix.
+     */
+    public static String generateApplicationDataPrefix(String interest, String identifier) {
+        return GENERAL_PREFIX + APPLICATION_STRATEGY + "/" + interest + "/" + identifier;
     }
 
-    public static String generateApplicationBroadcastPrefix(String interest){
-        return GENERAL_PREFIX+APPLICATION_STRATEGY+APPLICATION_NAME+"/"+interest;
+    /**
+     * This method is used to generate the ApplicationBroadcastPrefix.
+     *
+     * @param interest Interest name selected by the user.
+     * @return String with the applicationBroadcastPrefix.
+     */
+    public static String generateApplicationBroadcastPrefix(String interest) {
+        return GENERAL_PREFIX + APPLICATION_STRATEGY + APPLICATION_NAME + "/" + interest;
     }
 
 

@@ -10,20 +10,37 @@ package pt.ulusofona.copelabs.now.ndn;
 import java.util.HashMap;
 
 /**
- * Created by copelabs on 03/04/2018.
+ * This class is used to  control the ChronoSync creates in the application. Every time that a user
+ * selects a category a new Instance of ChronoSync is created and is saved in this class.
+ *
+ * @version 1.0
+ *          COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:05 PM18.
  */
 
-public class ChronoSyncManager {
+public abstract class ChronoSyncManager {
 
-    private HashMap<String,ChronoSync> map = new HashMap<>();
+    /**
+     * HashMap used to save the objects.
+     */
+    private static HashMap<String, ChronoSync> map = new HashMap<>();
 
-    public ChronoSyncManager (){}
-
-    public void registerChronoSync(String category,ChronoSync chronoSync){
-        map.put(category,chronoSync);
+    /**
+     * This fuction register a new ChronoSync.
+     *
+     * @param category   Category selected.
+     * @param chronoSync ChronoSync object.
+     */
+    public static void registerChronoSync(String category, ChronoSync chronoSync) {
+        map.put(category, chronoSync);
     }
 
-    public ChronoSync getChronoSync(String category){
+    /**
+     * This function is used to get a specific chronoSync object.
+     *
+     * @param category Category selcted.
+     * @return ChronoSync Object.
+     */
+    public static ChronoSync getChronoSync(String category) {
         return map.get(category);
     }
 }

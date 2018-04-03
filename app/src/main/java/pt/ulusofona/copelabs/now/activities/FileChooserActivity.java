@@ -19,11 +19,24 @@ import pt.ulusofona.copelabs.now.models.FileItem;
 import com.example.copelabs.now.R;
 
 
-
+/**
+ * This class extends to ListActivity and it preforms the action of retrieve the information
+ * about the files saved in the device.
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ * @version 1.0
+ *          COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:05 PM
+ */
 public class FileChooserActivity extends ListActivity {
 
+	/**
+	 * Used to contain the information of a file.
+	 */
 	private File mCurrentDir;
 
+	/**
+	 * Adapter used to show the information of the file.
+	 */
     private FileArrayAdapter mAdapter;
 
     @Override
@@ -33,10 +46,14 @@ public class FileChooserActivity extends ListActivity {
         fill(mCurrentDir);
     }
 
-    private void fill(File f) {
+	/**
+	 * This method searches for all file save in a specific repository path.
+	 * @param file File used to specify the path.
+	 */
+	private void fill(File file) {
 
-    	File[]dirs = f.listFiles(); 
-		 this.setTitle("Current Dir: "+f.getName());
+    	File[]dirs = file.listFiles();
+		 this.setTitle("Current Dir: "+file.getName());
 		 List<FileItem>dir = new ArrayList<FileItem>();
 		 List<FileItem>fls = new ArrayList<FileItem>();
 
@@ -80,8 +97,8 @@ public class FileChooserActivity extends ListActivity {
 		 Collections.sort(dir);
 		 Collections.sort(fls);
 		 dir.addAll(fls);
-		 if(!f.getName().equalsIgnoreCase("sdcard"))
-			 dir.add(0,new FileItem("..","Parent Directory","",f.getParent(),"ic_arrow_left"));
+		 if(!file.getName().equalsIgnoreCase("sdcard"))
+			 dir.add(0,new FileItem("..","Parent Directory","",file.getParent(),"ic_arrow_left"));
 		 mAdapter = new FileArrayAdapter(FileChooserActivity.this, R.layout.file_view,dir);
 		 this.setListAdapter(mAdapter);
     }

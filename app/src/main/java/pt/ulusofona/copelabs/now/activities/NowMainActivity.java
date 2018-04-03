@@ -120,6 +120,10 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
      * List of categories Subscribed.
      */
     private ArrayList<String> mInteresSubscribed = new ArrayList<>();
+
+    /**
+     * List of prefixes used in the application.
+     */
     private ArrayList<String> mPrefixes = new ArrayList<>();
     /**
      * HashMap used to save the files shared in the application.
@@ -142,11 +146,14 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     private EditText mEditText;
 
     /**
-     *
+     * used to save all the information in order to communicate with NDN.
      */
-    private Map<String, ChronoSync> mChonoSyncMap = new HashMap();
     private NDNParameters mNDNParmiters;
+    /**
+     * Map used to keep in track all the messages that arrives to the application.
+     */
     private Map<String, Message> mData = new HashMap();
+
     private int mMessageSent = 0;
     private DBManager dbManager = new DBManager(this, this);
     private Bitmap mImageBitmap;
@@ -408,7 +415,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
         mNDNParmiters.setUUID(UUID.randomUUID().toString());
         mNDNParmiters.setUUID(mUser.getName());
         mNDNParmiters.setApplicationBroadcastPrefix(NameManager.generateApplicationBroadcastPrefix(interest));
-        mNDNParmiters.setApplicationNamePrefix(NameManager.generateApplicationDataprefix(interest,mNDNParmiters.getUUID()));
+        mNDNParmiters.setApplicationNamePrefix(NameManager.generateApplicationDataPrefix(interest,mNDNParmiters.getUUID()));
 
         mPrefixes.add(mNDNParmiters.getApplicationBroadcastPrefix());
         mPrefixes.add(mNDNParmiters.getmApplicationNamePrefix());
