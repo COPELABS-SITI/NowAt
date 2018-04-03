@@ -16,36 +16,77 @@ import java.util.Observable;
 import pt.ulusofona.copelabs.now.helpers.Utils;
 import pt.ulusofona.copelabs.now.ndn.ChronoSync;
 
-
+/**
+ * This class is used to register the CrhonoSync and starts synchronizing the information
+ * shared by the applications. Also, this class extends to Observable class.
+ *
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:08 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
 public class RegisterChronoSync extends Observable {
 
+    /**
+     * ChronoSync used to synchronize data.
+     */
     private ChronoSync mChronoSinc;
 
+    /**
+     * Constructor of RegisterChronoSync class.
+     * @param ChronoSync ChronoSync.
+     */
     public RegisterChronoSync(ChronoSync ChronoSync){
         mChronoSinc=ChronoSync;
         new RegisterChronoSyncTask(mChronoSinc).execute();
     }
 
+    /**
+     * This class extends to AsyncTask and it handles the action of receive new information from
+     * others application that are using ChronoSync in order to synchronize information in the same
+     * prefix.
+     */
+    public class RegisterChronoSyncTask extends AsyncTask<Void, Void, Void> implements ChronoSync2013.OnInitialized, OnRegisterFailed, ChronoSync2013.OnReceivedSyncState{
 
-    public class RegisterChronoSyncTask extends AsyncTask<Void, Void, Void> {
+        /**
+         * Number of attempts to register the chronoSync.
+         */
+        private int attempt = 1;
 
-        int attempt = 1;  // Keep track on current attempt. Try for max 3 attempts.
-
+        /**
+         * Contains the functions to keep tracking all the information shared.
+         */
         private ChronoSync mChronoSinc;
 
+        /**
+         * Used for debug.
+         */
         private String TAG = RegisterChronoSyncTask.class.getSimpleName();  // TAG for logging
 
-        // Constructors
-        RegisterChronoSyncTask(ChronoSync ChronoSync) {
+        /**
+         * Constructor of RegisterChronoSyncTask class.
+         * @param ChronoSync ChronoSync
+         */
+        public RegisterChronoSyncTask(ChronoSync ChronoSync) {
             this(ChronoSync, 1);
 
         }
 
-        RegisterChronoSyncTask(ChronoSync ChronoSync, int attempt) {
+        /**
+         * Constructor of RegisterChronoSyncTask class.
+         * @param ChronoSync ChronoSync
+         * @param attempt Number of attempt to be registered.
+         */
+        public RegisterChronoSyncTask(ChronoSync ChronoSync, int attempt) {
             this.attempt = attempt;
             this.mChronoSinc = ChronoSync;
         }
 
+        /**
+         * This method register the ChronoSync2013.
+         * @param params
+         * @return
+         */
         @Override
         protected Void doInBackground(Void... params) {
             try {
@@ -53,118 +94,20 @@ public class RegisterChronoSync extends Observable {
 
                 KeyChain testKeyChain = Utils.buildTestKeyChain();
 
-         mChronoSinc.mSync = new ChronoSync2013(new ChronoSync2013.OnReceivedSyncState() {
-
-                    @Override
-                    public void onReceivedSyncState(List syncStates, boolean isRecovery) {
-
-                        for (Object syncStateOb : syncStates) {
-
-                            ChronoSync2013.SyncState syncState = (ChronoSync2013.SyncState) syncStateOb;
-
-                            String syncPrefix = syncState.getDataPrefix();
-
-                            long syncSeq = syncState.getSequenceNo();
-
-                            Log.d(TAG, "1 SyncPrefix " + syncPrefix);
-
-                            Log.d(TAG, "2 SyncState sequenceNo " + syncSeq);
-
-                            Log.d(TAG, "MAP" + mChronoSinc.getHighestRequested().values());
-                            // Ignore the initial sync state and sync updates of this user
-                            if (syncSeq == 0 || syncPrefix.contains(mChronoSinc.getNDN().getUUID())) {
-                                Log.d(TAG, "SYNC: prefix: " + syncPrefix + " seq: " + syncSeq + " ignored. (is Recovery: " + isRecovery + ")");
-                                continue;
-                            }
-
-                            if (mChronoSinc.getHighestRequested().keySet().contains(syncPrefix)) {
-                                long highestSeq = mChronoSinc.getHighestRequested().get(syncPrefix);
-
-                                if (syncSeq == highestSeq + 1) {
-                                    // New request
-                                    mChronoSinc.getHighestRequested().put(syncPrefix, syncSeq);
-                                } else if (syncSeq <= highestSeq) {
-                                    // Duplicate request, ignore
-                                    Log.d(TAG, "Avoiding starting new task for: " + syncPrefix + "/" + syncSeq);
-
-                                } else if (syncSeq - highestSeq > 1) {
-                                    // Gaps found. Recover missing pieces
-                                    Log.d(TAG, "Gaps in SYNC found. Sending Interest for missing pieces.");
-                                    highestSeq++;
-                                    while (highestSeq <= syncSeq) {
-                                        setValue(syncPrefix+"/"+highestSeq);
-
-                                        new FetchChanges(mChronoSinc, syncPrefix + "/" + highestSeq);
-                                        highestSeq++;
-                                    }
-                                    mChronoSinc.getHighestRequested().put(syncPrefix, syncSeq);
-                                }
-                            }  else {
-                                mChronoSinc.getHighestRequested().put(syncPrefix, syncSeq);
-                            }
-                            String syncNameStr = syncPrefix + "/" + syncSeq;
-                            Log.d(TAG, "SYNC: " + syncNameStr + " (is Recovery: " + isRecovery + ")");
-                            setValue(syncNameStr);
-                            new FetchChanges(mChronoSinc, syncNameStr);
-
-                        }
-
-                    }
-                }, new ChronoSync2013.OnInitialized() {
-                    @Override
-                    public void onInitialized() {
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                // Done registering ChronoSync
-                                Log.d(TAG, "Chronosync registration succed");
-                            }
-                        };
-
-
-                        Log.d(TAG, "ChronoSync onInitialized");
-                    }
-                }, new Name(mChronoSinc.getNDN().getmApplicationNamePrefix()),
+                mChronoSinc.mSync = new ChronoSync2013(this,
+                this, new Name(mChronoSinc.getNDN().getmApplicationNamePrefix()),
 
                         // App data prefix
-                        new Name(mChronoSinc.getNDN().getApplicationBroadcastPrefix()), // Broadcast prefix
+                        new Name(mChronoSinc.getNDN().getApplicationBroadcastPrefix()),
+                        // Broadcast prefix
                         0L,
                         mChronoSinc.getNDN().getFace(),
                         testKeyChain,
                         testKeyChain.getDefaultCertificateName(),
-                        5000.0, new OnRegisterFailed() {
-
-                    @Override
-                    public void onRegisterFailed(Name prefix) {
-                        // Handle failure of this register attempt. Try again.
-                        Log.d(TAG, "ChronoSync registration failed, Attempt: " + attempt);
-                        Log.d(TAG, "Starting next attempt");
-
-
-                        //try to connect the chronosync
-                        if(attempt < 100000) {
-                            new RegisterChronoSyncTask(mChronoSinc, attempt + 1).execute();
-                        }else{
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    // Done registered fail ChronoSync
-
-                                    Log.d(TAG, "Chronosync registration failed");
-
-                                }
-                            };
-                            attempt=1;
-
-                        }
-                    }
-
-                }
+                        20000.0, this
                 );
             } catch (IOException | net.named_data.jndn.security.SecurityException e) {
                 e.printStackTrace();
-
-
             }
             return null;
 
@@ -197,6 +140,92 @@ public class RegisterChronoSync extends Observable {
                     }
                 }
             }).start();
+        }
+
+        @Override
+        public void onInitialized() {
+            new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(TAG, "Chronosync registration succed");
+                }
+            };
+            Log.d(TAG, "ChronoSync onInitialized");
+        }
+
+        @Override
+        public void onRegisterFailed(Name prefix) {
+            Log.d(TAG, "ChronoSync registration failed, Attempt: " + attempt);
+            Log.d(TAG, "Starting next attempt");
+            //try to connect the chronosync
+            if(attempt < 3) {
+                new RegisterChronoSyncTask(mChronoSinc, attempt + 1).execute();
+            }else{
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        // Done registered fail ChronoSync
+                        Log.d(TAG, "Chronosync registration failed");
+                    }
+                };
+                attempt=1;
+            }
+        }
+
+        @Override
+        public void onReceivedSyncState(List syncStates, boolean isRecovery) {
+            for (Object syncStateOb : syncStates) {
+
+                ChronoSync2013.SyncState syncState = (ChronoSync2013.SyncState) syncStateOb;
+
+                String syncPrefix = syncState.getDataPrefix();
+
+                long syncSeq = syncState.getSequenceNo();
+
+                Log.d(TAG, "1 SyncPrefix " + syncPrefix);
+
+                Log.d(TAG, "2 SyncState sequenceNo " + syncSeq);
+
+                Log.d(TAG, "MAP" + mChronoSinc.getHighestRequested().values());
+                // Ignore the initial sync state and sync updates of this user
+                if (syncSeq == 0 || syncPrefix.contains(mChronoSinc.getNDN().getUUID())) {
+                    Log.d(TAG, "SYNC: prefix: " + syncPrefix + " seq: " + syncSeq + " ignored. (is Recovery: " + isRecovery + ")");
+                    continue;
+                }
+
+                if (mChronoSinc.getHighestRequested().keySet().contains(syncPrefix)) {
+                    long highestSeq = mChronoSinc.getHighestRequested().get(syncPrefix);
+                    Log.d(TAG, "highestSeq: " + highestSeq);
+                    if (syncSeq == highestSeq + 1) {
+                        // New request
+                        mChronoSinc.getHighestRequested().put(syncPrefix, syncSeq);
+                    } else if (syncSeq <= highestSeq) {
+                        // Duplicate request, ignore
+                        Log.d(TAG, "Avoiding starting new task for: " + syncPrefix + "/" + syncSeq);
+                        continue;
+                    } else if (syncSeq - highestSeq > 1) {
+                        // Gaps found. Recover missing pieces
+                        Log.d(TAG, "Gaps in SYNC found. Sending Interest for missing pieces.");
+                        highestSeq++;
+                        while (highestSeq <= syncSeq) {
+                            setValue(syncPrefix+"/"+highestSeq);
+
+                            //new FetchChanges(mChronoSinc, syncPrefix + "/" + highestSeq);
+                            highestSeq++;
+                        }
+                        mChronoSinc.getHighestRequested().put(syncPrefix, syncSeq);
+                    }
+                }  else {
+                    mChronoSinc.getHighestRequested().put(syncPrefix, syncSeq);
+                }
+                String syncNameStr = syncPrefix + "/" + syncSeq;
+                Log.d(TAG, "SYNC: " + syncNameStr + " (is Recovery: " + isRecovery + ")");
+                setValue(syncNameStr);
+                //new FetchChanges(mChronoSinc, syncNameStr);
+
+            }
+
+
         }
     }
 

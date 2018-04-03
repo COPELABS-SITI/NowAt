@@ -5,7 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -15,15 +17,18 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="pt.ulusofona.copelabs.now.activities.SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="pt.ulusofona.copelabs.now.activities.NowMainActivity" />
-        <activity android:name="pt.ulusofona.copelabs.now.activities.FileChooserActivity" />
+        <activity android:name="pt.ulusofona.copelabs.now.activities.NowMainActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name="pt.ulusofona.copelabs.now.activities.FileChooserActivity"
+            android:screenOrientation="portrait"/>
 
     </application>
 

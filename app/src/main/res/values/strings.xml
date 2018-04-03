@@ -45,4 +45,6 @@
     <string name="cars_now">cars</string>
     <string name="hobby_now">hobby</string>
     <string name="others_now">others</string>
+
+    <string name="numeral">#</string>
 </resources>

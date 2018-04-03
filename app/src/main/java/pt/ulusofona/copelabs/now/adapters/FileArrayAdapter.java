@@ -62,11 +62,11 @@ public class FileArrayAdapter extends ArrayAdapter<FileItem>{
 	               	    imageCity.setImageDrawable(image);
                        
                        if(t1!=null)
-                       		t1.setText(o.getmName());
+                       		t1.setText(o.getName());
                        if(t2!=null)
-                          	t2.setText(o.getmData());
+                          	t2.setText(o.getData());
                        if(t3!=null)
-                          	t3.setText(o.getmDate());
+                          	t3.setText(o.getDate());
                        
                }
                return v;

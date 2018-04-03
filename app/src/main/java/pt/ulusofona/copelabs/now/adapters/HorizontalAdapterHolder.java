@@ -2,8 +2,6 @@ package pt.ulusofona.copelabs.now.adapters;
 
 
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,43 +13,46 @@ import com.example.copelabs.now.R;
 
 import java.util.List;
 
-import pt.ulusofona.copelabs.now.activities.NowMainActivityInterface;
+import pt.ulusofona.copelabs.now.interfaces.NowMainActivityInterface;
+
 /**
  * This class is part of Now@ application. It extends to ReyclerView.Adapter. This class returns
  * a view for each object in a collection of data.
- * @version 1.0
- * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:06 PM
  *
  * @author Omar Aponte (COPELABS/ULHT)
+ * @version 1.0
+ *          COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:06 PM
  */
 
 public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdapterHolder.MyViewHolder> {
 
+    /**
+     * Used for debug.
+     */
     private String TAG = HorizontalAdapterHolder.class.getSimpleName();
 
+    /**
+     * List of string with the name of the categories.
+     */
     private List<String> mHorizontalList;
 
+    /**
+     * Context of the application.
+     */
     private Context mContext;
 
+    /**
+     * Interface of the main activity.
+     */
     private NowMainActivityInterface mNowMainActivityInterface;
 
 
-     public class MyViewHolder extends RecyclerView.ViewHolder  {
-
-        private TextView txtView;
-
-        public MyViewHolder(View view) {
-            super(view);
-            txtView = (TextView) view.findViewById(R.id.txtView);
-
-        }
-     }
-
     /**
-     * This method is hte consturctor of HorizontalAdapterHolder
-     * @param horizontalList List<String> of collection data
-     * @param context Context of the application
-     * @param nowMainActivityInterface NowMainActivityInterface
+     * This method is hte constructor of HorizontalAdapterHolder
+     *
+     * @param horizontalList           List<String> of collection data
+     * @param context                  Context of the application
+     * @param nowMainActivityInterface NowMainActivityInterface interface of the main activity.
      */
     public HorizontalAdapterHolder(List<String> horizontalList, Context context, NowMainActivityInterface nowMainActivityInterface) {
         mHorizontalList = horizontalList;
@@ -67,15 +68,21 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
         return new MyViewHolder(itemView);
     }
 
+    /**
+     * This method executes the bind process of the view holder.
+     *
+     * @param holder   Holder which contains the view.
+     * @param position Position of the ViewHolder.
+     */
     @Override
     public void onBindViewHolder(final HorizontalAdapterHolder.MyViewHolder holder, final int position) {
-        holder.txtView.setText(mHorizontalList.get(position));
 
+        holder.txtView.setText(mHorizontalList.get(position));
         holder.txtView.setId(position);
-        holder.txtView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(holder.txtView.getCurrentTextColor() == mContext.getResources().getColor(R.color.textDeseable)) {
+                if (holder.txtView.getCurrentTextColor() == mContext.getResources().getColor(R.color.textDeseable)) {
 
                     holder.itemView.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.backgroud_holder_enable, null));
                     holder.txtView.setTextColor(mContext.getResources().getColor(R.color.blue));
@@ -83,7 +90,7 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
                     // Keep track of the ChronoSync + Interest.
                     mNowMainActivityInterface.updateValueSelected(mHorizontalList.get(position));
 
-                }else{
+                } else {
 
                     holder.itemView.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.backgorud_holder_item_desable, null));
                     holder.txtView.setTextColor(mContext.getResources().getColor(R.color.textDeseable));
@@ -94,12 +101,26 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
         });
     }
 
-
-
     @Override
     public int getItemCount() {
-
         return mHorizontalList.size();
+    }
+
+    /**
+     * View holder used to keep the information about the categories.
+     */
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+
+        /**
+         * Textview displays the name of the category.
+         */
+        private TextView txtView;
+
+        public MyViewHolder(View view) {
+            super(view);
+            txtView = (TextView) view.findViewById(R.id.txtView);
+
+        }
     }
 
 }

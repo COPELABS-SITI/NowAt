@@ -2,9 +2,9 @@ package pt.ulusofona.copelabs.now.helpers;
 /**
  * This class is part of Now@ application. it provides general functions that are used for
  * help specific operations through the application.
+ *
  * @version 1.0
  * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:07 PM
- *
  * @author Omar Aponte (COPELABS/ULHT)
  */
 
@@ -21,6 +21,7 @@ import net.named_data.jndn.security.identity.MemoryPrivateKeyStorage;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Random;
 
 public abstract class Utils {
 
@@ -93,5 +94,14 @@ public abstract class Utils {
                     }
                 });
         builder.show();
+    }
+
+    public static String generateSmallUuid() {
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < 4; i++) {
+            sb.append(random.nextInt(10));
+        }
+        return sb.toString();
     }
 }

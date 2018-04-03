@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ @version 1.0
+  ~ COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/16/17 11:50 AM
+  ~
+  ~ @author Omar Aponte (COPELABS/ULHT)
+  -->
+
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context="pt.ulusofona.copelabs.now.activities.NowMainActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/horizontal_recycler_view"
+        android:background="#fff"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/horizontal_recycler_view"
+        android:background="@color/lightBlue"
+        android:gravity="left"
+        android:paddingLeft="8dp"
+        android:textStyle="normal|bold" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/backgorud_holder_item_desable"
+        android:ems="10"
+        android:hint="Write your message"
+        android:inputType="textPersonName"
+        android:paddingLeft="8dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/imageButton2" />
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView3"
+        android:background="@color/white"
+        android:paddingLeft="8dp"
+        android:layout_above="@+id/spinner3" />
+
+    <ImageButton
+
+        android:id="@+id/imageButton"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_button"
+        app:srcCompat="@drawable/ic_share_variant"
+        android:layout_alignTop="@+id/editText"
+        android:layout_alignEnd="@+id/spinner3" />
+
+    <Spinner
+        android:id="@+id/spinner3"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_above="@+id/imageButton"
+        app:backgroundTint="@color/blue"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp" />
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_button"
+        app:srcCompat="@drawable/ic_camera"
+        android:layout_below="@+id/spinner3"
+        android:layout_toStartOf="@+id/imageButton" />
+
+
+</RelativeLayout>

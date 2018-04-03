@@ -12,34 +12,68 @@ import net.named_data.jndn.OnTimeout;
 import java.io.IOException;
 import java.util.Observable;
 
+
 import pt.ulusofona.copelabs.now.ndn.ChronoSync;
 
+/**
+ * This class extends to a Observable class and it contains the class used to fetch data
+ * when it is notify that a new data was created by another user.
+ *
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:08 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
+public class FetchChanges extends Observable {
 
-public class FetchChanges extends Observable{
-
-
+    /**
+     * Used for debug.
+     */
     private String TAG = FetchChanges.class.getSimpleName();
 
-    public FetchChanges(ChronoSync ChronoSync, String namePrefixStr){
-        new FetchChangesTask(ChronoSync,namePrefixStr).execute();
+    /**
+     * Constructor of FetchChanges class.
+     *
+     * @param ChronoSync    CHronoSync object.
+     * @param namePrefixStr Name prefix to be requested.
+     */
+    public FetchChanges(ChronoSync ChronoSync, String namePrefixStr) {
+        new FetchChangesTask(ChronoSync, namePrefixStr).execute();
     }
 
-    public class FetchChangesTask extends AsyncTask<Void, Void, Void> {
+    /**
+     * This class is an AsyncTask Class which handles the action of fetch new data created
+     * by others users.
+     */
+    public class FetchChangesTask extends AsyncTask<Void, Void, Void> implements OnTimeout {
 
-
-        String namePrefixStr;
         boolean m_shouldStop = false;
+        /**
+         * Name to be fetch.
+         */
+        private String namePrefixStr;
+        /**
+         * ChronoSync object.
+         */
         private ChronoSync mChronoSync;
 
+        /**
+         * Used to notify when the data was fetched.
+         */
+        private String m_retVal;
 
-        // Constructors
+        /**
+         * Constructor of FetchChangesTask class.
+         *
+         * @param ChronoSync    ChronoSync object.
+         * @param namePrefixStr Name to be sinchronized.
+         */
         public FetchChangesTask(ChronoSync ChronoSync, String namePrefixStr) {
             this.mChronoSync = ChronoSync;
             this.namePrefixStr = namePrefixStr;
 
         }
 
-        String m_retVal;
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -52,7 +86,6 @@ public class FetchChanges extends Observable{
                     @Override
                     public void
                     onData(Interest interest, Data data) {
-                        // Success, send data to be drawn by the Drawing view
                         m_retVal = data.getContent().toString();
                         m_shouldStop = true;
                         Log.d(TAG, "Got content: " + m_retVal);
@@ -60,19 +93,7 @@ public class FetchChanges extends Observable{
                         notifyObservers(m_retVal);
                     }
 
-                }, new OnTimeout() {
-                    @Override
-                    public void onTimeout(Interest interest) {
-                        // Failure, try again
-                        m_retVal = null;
-                        m_shouldStop = true;
-                        Log.d(TAG, "Got Timeout " + namePrefixStr);
-                        if (!mChronoSync.getNDN().getAtivityStop()) {
-                            new FetchChangesTask(mChronoSync, namePrefixStr).execute();
-                        }
-                    }
-                });
-
+                }, this);
 
 
             } catch (IOException e) {
@@ -85,6 +106,21 @@ public class FetchChanges extends Observable{
         @Override
         protected void onPostExecute(Void data) {
             Log.d(TAG, "Fetch Task (onPostExecute)");
+        }
+
+        /**
+         * When the request rises the timeOut, a new task of fetch is called.
+         *
+         * @param interest
+         */
+        @Override
+        public void onTimeout(Interest interest) {
+            m_retVal = null;
+            m_shouldStop = true;
+            Log.d(TAG, "Got Timeout " + namePrefixStr);
+            if (!mChronoSync.getNDN().getAtivityStop()) {
+                new FetchChangesTask(mChronoSync, namePrefixStr).execute();
+            }
         }
     }
 }

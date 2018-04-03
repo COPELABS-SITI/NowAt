@@ -20,34 +20,51 @@ import java.util.Observable;
 import pt.ulusofona.copelabs.now.helpers.Utils;
 import pt.ulusofona.copelabs.now.ndn.ChronoSync;
 
-
+/**
+ * This class extends to an Observable class and it contains the functions used to register
+ * prefixes in NDN.
+ * @version 1.0
+ * COPYRIGHTS COPELABS/ULHT, LGPLv3.0, 6/9/17 3:08 PM
+ *
+ * @author Omar Aponte (COPELABS/ULHT)
+ */
 public class RegisterPrefix extends Observable {
 
+    /**
+     * Used for debug.
+     */
     private String TAG = RegisterPrefix.class.getSimpleName();
 
+    /**
+     * ChronoSync object.
+     */
     private ChronoSync  mChronoSync;
 
-
-
+    /**
+     * Constructor of RegisterPrefix class.
+     * @param chornosync ChronoSync object.
+     */
     public RegisterPrefix(ChronoSync chornosync){
         mChronoSync=chornosync;
         new RegisterPrefixTask().execute();
     }
 
+    /**
+     * THis class extends to AsyncTask and it performs the registration of the prefix into NDN.
+     */
     private class RegisterPrefixTask extends AsyncTask<Void, Void, String> {
 
         private String m_retVal = "not changed";
 
-        RegisterPrefixTask() {
-
-        }
+        /**
+         * Constructor of register prefix task.
+         */
+        public RegisterPrefixTask(){}
 
         @Override
         protected String doInBackground(Void... params) {
 
             Log.d(TAG, "Register Prefix Task (doInBackground)");
-
-
             // Create keychain
             KeyChain keyChain;
             try {
@@ -70,23 +87,25 @@ public class RegisterPrefix extends Observable {
 
             Name base_name = new Name(mChronoSync.getNDN().getmApplicationNamePrefix());
 
-
             insert(base_name);
             return m_retVal;
 
         }
 
+        /**
+         * This method performs the registration of the prefix.
+         * @param base_name Name to be registered.
+         */
         private void insert(Name base_name){
 
             try {
                 // Register the prefix
-
                 mChronoSync.getNDN().getFace().registerPrefix(base_name, new OnInterestCallback() {
                     @Override
 
                     public void onInterest(Name prefix, Interest interest, Face face, long interestFilterId, InterestFilter filter) {
-
                         Name interestName = interest.getName();
+                        Log.d(TAG,interest.getName().toString());
                         Log.i("NDN", "Interest FilterID " + interestFilterId);
                         String lastComp = interestName.get(interestName.size() - 1).toEscapedString();
                         Log.i("NDN", "Interest received: " + lastComp);
@@ -123,6 +142,10 @@ public class RegisterPrefix extends Observable {
 
         }
 
+        /**
+         * When the registration ends, the observable is notified about that action.
+         * @param result String with the status of the operation.
+         */
         @Override
         protected void onPostExecute(final String result) {
             if (m_retVal.contains("ERROR:")) {

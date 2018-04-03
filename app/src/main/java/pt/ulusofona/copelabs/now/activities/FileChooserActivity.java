@@ -92,7 +92,7 @@ public class FileChooserActivity extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		FileItem o = mAdapter.getItem(position);
 		if(o.getImage().equalsIgnoreCase("ic_folder")||o.getImage().equalsIgnoreCase("ic_file_word")){
-				mCurrentDir = new File(o.getmPath());
+				mCurrentDir = new File(o.getPath());
 				fill(mCurrentDir);
 		}
 		else
@@ -104,7 +104,7 @@ public class FileChooserActivity extends ListActivity {
     {
     	Intent intent = new Intent();
         intent.putExtra("GetPath", mCurrentDir.toString());
-        intent.putExtra("GetFileName",o.getmName());
+        intent.putExtra("GetFileName",o.getName());
         setResult(RESULT_OK, intent);
         finish();
     }
