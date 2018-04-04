@@ -87,7 +87,7 @@ public class HorizontalAdapterHolder extends RecyclerView.Adapter<HorizontalAdap
                     holder.itemView.setBackground(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.backgroud_holder_enable, null));
                     holder.txtView.setTextColor(mContext.getResources().getColor(R.color.blue));
 
-                    // Keep track of the ChronoSync + Interest.
+                    // Keep track of the ChronoSyncManager + Interest.
                     mNowMainActivityInterface.updateValueSelected(mHorizontalList.get(position));
 
                 } else {

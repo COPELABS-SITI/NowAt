@@ -186,7 +186,7 @@ public class SegmentationTask extends AsyncTask<Void, Void, String[]> {
         }
 
         /**
-         * This method performs a sleep timer with the intention of no overload the ChronoSync.
+         * This method performs a sleep timer with the intention of no overload the ChronoSyncManager.
          * @param voids
          * @return
          */

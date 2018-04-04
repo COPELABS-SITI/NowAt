@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Observable;
 
 import pt.ulusofona.copelabs.now.helpers.Utils;
-import pt.ulusofona.copelabs.now.ndn.ChronoSync;
+import pt.ulusofona.copelabs.now.ndn.ChronoSyncManager;
 
 /**
  * This class is used to register the CrhonoSync and starts synchronizing the information
@@ -29,22 +29,22 @@ import pt.ulusofona.copelabs.now.ndn.ChronoSync;
 public class RegisterChronoSync extends Observable {
 
     /**
-     * ChronoSync used to synchronize data.
+     * ChronoSyncManager used to synchronize data.
      */
-    private ChronoSync mChronoSinc;
+    private ChronoSyncManager mChronoSinc;
 
     /**
      * Constructor of RegisterChronoSync class.
-     * @param ChronoSync ChronoSync.
+     * @param ChronoSyncManager ChronoSyncManager.
      */
-    public RegisterChronoSync(ChronoSync ChronoSync){
-        mChronoSinc=ChronoSync;
+    public RegisterChronoSync(ChronoSyncManager ChronoSyncManager){
+        mChronoSinc= ChronoSyncManager;
         new RegisterChronoSyncTask(mChronoSinc).execute();
     }
 
     /**
      * This class extends to AsyncTask and it handles the action of receive new information from
-     * others application that are using ChronoSync in order to synchronize information in the same
+     * others application that are using ChronoSyncManager in order to synchronize information in the same
      * prefix.
      */
     public class RegisterChronoSyncTask extends AsyncTask<Void, Void, Void> implements ChronoSync2013.OnInitialized, OnRegisterFailed, ChronoSync2013.OnReceivedSyncState{
@@ -62,7 +62,7 @@ public class RegisterChronoSync extends Observable {
         /**
          * Contains the functions to keep tracking all the information shared.
          */
-        private ChronoSync mChronoSinc;
+        private ChronoSyncManager mChronoSinc;
 
         /**
          * Used for debug.
@@ -71,21 +71,21 @@ public class RegisterChronoSync extends Observable {
 
         /**
          * Constructor of RegisterChronoSyncTask class.
-         * @param ChronoSync ChronoSync
+         * @param ChronoSyncManager ChronoSyncManager
          */
-        public RegisterChronoSyncTask(ChronoSync ChronoSync) {
-            this(ChronoSync, 1);
+        public RegisterChronoSyncTask(ChronoSyncManager ChronoSyncManager) {
+            this(ChronoSyncManager, 1);
 
         }
 
         /**
          * Constructor of RegisterChronoSyncTask class.
-         * @param ChronoSync ChronoSync
+         * @param ChronoSyncManager ChronoSyncManager
          * @param attempt Number of attempt to be registered.
          */
-        public RegisterChronoSyncTask(ChronoSync ChronoSync, int attempt) {
+        public RegisterChronoSyncTask(ChronoSyncManager ChronoSyncManager, int attempt) {
             this.attempt = attempt;
-            this.mChronoSinc = ChronoSync;
+            this.mChronoSinc = ChronoSyncManager;
         }
 
         /**
@@ -107,7 +107,7 @@ public class RegisterChronoSync extends Observable {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Log.d(TAG, "ChronoSync Task (doInBackground): Attempt: " + attempt);
+                Log.d(TAG, "ChronoSyncManager Task (doInBackground): Attempt: " + attempt);
 
                 KeyChain testKeyChain = Utils.buildTestKeyChain();
 
@@ -171,12 +171,12 @@ public class RegisterChronoSync extends Observable {
                     Log.d(TAG, "Chronosync registration succed");
                 }
             };
-            Log.d(TAG, "ChronoSync onInitialized");
+            Log.d(TAG, "ChronoSyncManager onInitialized");
         }
 
         @Override
         public void onRegisterFailed(Name prefix) {
-            Log.d(TAG, "ChronoSync registration failed, Attempt: " + attempt);
+            Log.d(TAG, "ChronoSyncManager registration failed, Attempt: " + attempt);
             Log.d(TAG, "Starting next attempt");
             //try to connect the chronosync
             if(attempt < 3) {
@@ -185,7 +185,7 @@ public class RegisterChronoSync extends Observable {
                 new Runnable() {
                     @Override
                     public void run() {
-                        // Done registered fail ChronoSync
+                        // Done registered fail ChronoSyncManager
                         Log.d(TAG, "Chronosync registration failed");
                     }
                 };

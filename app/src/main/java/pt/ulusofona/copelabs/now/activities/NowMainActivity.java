@@ -37,9 +37,9 @@ import pt.ulusofona.copelabs.now.helpers.DBManager;
 import pt.ulusofona.copelabs.now.helpers.Utils;
 import pt.ulusofona.copelabs.now.interfaces.NowMainActivityInterface;
 import pt.ulusofona.copelabs.now.models.User;
-import pt.ulusofona.copelabs.now.ndn.ChronoSync;
-import pt.ulusofona.copelabs.now.models.Message;
 import pt.ulusofona.copelabs.now.ndn.ChronoSyncManager;
+import pt.ulusofona.copelabs.now.models.Message;
+import pt.ulusofona.copelabs.now.ndn.ChronoSyncManagerHelper;
 import pt.ulusofona.copelabs.now.ndn.NDNParameters;
 import pt.ulusofona.copelabs.now.ndn.NameManager;
 import pt.ulusofona.copelabs.now.task.SegmentationTask;
@@ -93,9 +93,9 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     private ArrayList<Message> mMenssages = new ArrayList<>();
 
     /**
-     * Contains the ChronoSync created.
+     * Contains the ChronoSyncManager created.
      */
-    private ArrayList<ChronoSync> mChronosyncs = new ArrayList<>();
+    private ArrayList<ChronoSyncManager> mChronosyncs = new ArrayList<>();
     /**
      * Adapter used to display the messages.
      */
@@ -159,7 +159,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
     private Bitmap mImageBitmap;
     private int mMessageID = 0;
     private String idMessage;
-    private ChronoSyncManager mChronoSyncMngr;
+    private ChronoSyncManagerHelper mChronoSyncMngr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -275,7 +275,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
                     }
                 });
 
-        mChronoSyncMngr = new ChronoSyncManager();
+
     }
 
     @Override
@@ -381,27 +381,21 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
             e.printStackTrace();
         }
         //Add message to list
-
-
-        //mMessageSent=mMessageSent+message;
         mMessageSent++;
-        if (mMessageSent == size) {
+        if (mMessageSent == size && section!=-1) {
             mMenssages.add(0, new Message(user.getName(), message, interest, Utils.getDate(), String.valueOf(idMessage) + user.getName(), mImageBitmap));
             mMessageSent = 0;
         }
-
         if (section == -1) {
             mMenssages.add(0, new Message(user.getName(), message, interest, Utils.getDate(), String.valueOf(idMessage) + user.getName()));
             mMessageSent = 0;
+            hideSoftKeyboard();
         }
-
-
         mData.put(idMessage, new Message(user.getName(), message, interest, Utils.getDate(), String.valueOf(idMessage) + user.getName(), mImageBitmap));
         //Notify changes
         mMenssageAdapter.notifyDataSetChanged();
-
         Toast.makeText(getApplicationContext(), "Message sent", Toast.LENGTH_SHORT).show();
-        hideSoftKeyboard();
+
     }
 
     /**
@@ -420,19 +414,19 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
         mPrefixes.add(mNDNParmiters.getApplicationBroadcastPrefix());
         mPrefixes.add(mNDNParmiters.getmApplicationNamePrefix());
 
-        ChronoSync chronoSync = new ChronoSync(mNDNParmiters,this);
-        chronoSync.addObserver(this);
+        ChronoSyncManager chronoSyncManager = new ChronoSyncManager(mNDNParmiters,this);
+        chronoSyncManager.addObserver(this);
 
-        mChronosyncs.add(chronoSync);
+        mChronosyncs.add(chronoSyncManager);
 
         mInteresSubscribed.add(interest);
 
-        mChronoSyncMngr.registerChronoSync(interest,chronoSync);
-        //mChonoSyncMap.put(interest, chronoSync);
+        ChronoSyncManagerHelper.registerChronoSync(interest, chronoSyncManager);
+        //mChonoSyncMap.put(interest, chronoSyncManager);
     }
 
     /**
-     * This method takes the data and the interest to subscribe into ChronoSync
+     * This method takes the data and the interest to subscribe into ChronoSyncManager
      *
      * @param jsonData String based on json structure
      * @param interest String interest selected
@@ -443,8 +437,8 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
         //mChonoSyncMap.get(interest.toLowerCase()).increaseSequenceNos();
 
 
-        mChronoSyncMngr.getChronoSync(interest.toLowerCase()).getDataHistory().add(jsonData);
-        mChronoSyncMngr.getChronoSync(interest.toLowerCase()).increaseSequenceNos();
+        ChronoSyncManagerHelper.getChronoSync(interest.toLowerCase()).getDataHistory().add(jsonData);
+        ChronoSyncManagerHelper.getChronoSync(interest.toLowerCase()).increaseSequenceNos();
         Log.d(TAG, "Stroke generated: " + jsonData);
     }
 
@@ -454,7 +448,7 @@ public class NowMainActivity extends AppCompatActivity implements Observer, NowM
      */
     @Override
     public void update(Observable o, Object arg) {
-        if (o instanceof ChronoSync) {
+        if (o instanceof ChronoSyncManager) {
             Log.d(TAG, "Data reveived size message " + mMenssages.size());
             parseJSONReceiver(String.valueOf(arg));
             updateListView();

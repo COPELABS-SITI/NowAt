@@ -26,13 +26,13 @@ public class NDNParameters {
     private Face mFace;
 
     /**
-     * ApplicationNamePrefix requested by ChronoSync.
+     * ApplicationNamePrefix requested by ChronoSyncManager.
      */
 
     private String mApplicationNamePrefix;
 
     /**
-     * ApplicationBroadcastPrefix requested by ChronoSync.
+     * ApplicationBroadcastPrefix requested by ChronoSyncManager.
      */
     private String mApplicationBroadcastPrefix;
 

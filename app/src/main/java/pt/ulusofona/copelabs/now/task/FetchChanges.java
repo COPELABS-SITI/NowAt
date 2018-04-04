@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Observable;
 
 
-import pt.ulusofona.copelabs.now.ndn.ChronoSync;
+import pt.ulusofona.copelabs.now.ndn.ChronoSyncManager;
 
 /**
  * This class extends to a Observable class and it contains the class used to fetch data
@@ -34,11 +34,11 @@ public class FetchChanges extends Observable {
     /**
      * Constructor of FetchChanges class.
      *
-     * @param ChronoSync    CHronoSync object.
+     * @param ChronoSyncManager    CHronoSync object.
      * @param namePrefixStr Name prefix to be requested.
      */
-    public FetchChanges(ChronoSync ChronoSync, String namePrefixStr) {
-        new FetchChangesTask(ChronoSync, namePrefixStr).execute();
+    public FetchChanges(ChronoSyncManager ChronoSyncManager, String namePrefixStr) {
+        new FetchChangesTask(ChronoSyncManager, namePrefixStr).execute();
     }
 
     /**
@@ -53,9 +53,9 @@ public class FetchChanges extends Observable {
          */
         private String namePrefixStr;
         /**
-         * ChronoSync object.
+         * ChronoSyncManager object.
          */
-        private ChronoSync mChronoSync;
+        private ChronoSyncManager mChronoSyncManager;
 
         /**
          * Used to notify when the data was fetched.
@@ -65,11 +65,11 @@ public class FetchChanges extends Observable {
         /**
          * Constructor of FetchChangesTask class.
          *
-         * @param ChronoSync    ChronoSync object.
+         * @param ChronoSyncManager    ChronoSyncManager object.
          * @param namePrefixStr Name to be sinchronized.
          */
-        public FetchChangesTask(ChronoSync ChronoSync, String namePrefixStr) {
-            this.mChronoSync = ChronoSync;
+        public FetchChangesTask(ChronoSyncManager ChronoSyncManager, String namePrefixStr) {
+            this.mChronoSyncManager = ChronoSyncManager;
             this.namePrefixStr = namePrefixStr;
 
         }
@@ -82,7 +82,7 @@ public class FetchChanges extends Observable {
 
 
             try {
-                mChronoSync.getNDN().getFace().expressInterest(new Name(nameStr), new OnData() {
+                mChronoSyncManager.getNDN().getFace().expressInterest(new Name(nameStr), new OnData() {
                     @Override
                     public void
                     onData(Interest interest, Data data) {
@@ -118,8 +118,8 @@ public class FetchChanges extends Observable {
             m_retVal = null;
             m_shouldStop = true;
             Log.d(TAG, "Got Timeout " + namePrefixStr);
-            if (!mChronoSync.getNDN().getAtivityStop()) {
-                new FetchChangesTask(mChronoSync, namePrefixStr).execute();
+            if (!mChronoSyncManager.getNDN().getAtivityStop()) {
+                new FetchChangesTask(mChronoSyncManager, namePrefixStr).execute();
             }
         }
     }

@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.Observable;
 
 import pt.ulusofona.copelabs.now.helpers.Utils;
-import pt.ulusofona.copelabs.now.ndn.ChronoSync;
+import pt.ulusofona.copelabs.now.ndn.ChronoSyncManager;
 
 /**
  * This class extends to an Observable class and it contains the functions used to register
@@ -36,16 +36,16 @@ public class RegisterPrefix extends Observable {
     private String TAG = RegisterPrefix.class.getSimpleName();
 
     /**
-     * ChronoSync object.
+     * ChronoSyncManager object.
      */
-    private ChronoSync  mChronoSync;
+    private ChronoSyncManager mChronoSyncManager;
 
     /**
      * Constructor of RegisterPrefix class.
-     * @param chornosync ChronoSync object.
+     * @param chornosync ChronoSyncManager object.
      */
-    public RegisterPrefix(ChronoSync chornosync){
-        mChronoSync=chornosync;
+    public RegisterPrefix(ChronoSyncManager chornosync){
+        mChronoSyncManager =chornosync;
         new RegisterPrefixTask().execute();
     }
 
@@ -76,16 +76,16 @@ public class RegisterPrefix extends Observable {
             }
 
             // Register keychain with the face
-            keyChain.setFace(mChronoSync.getNDN().getFace());
+            keyChain.setFace(mChronoSyncManager.getNDN().getFace());
             try {
-                mChronoSync.getNDN().getFace().setCommandSigningInfo(keyChain, keyChain.getDefaultCertificateName());
+                mChronoSyncManager.getNDN().getFace().setCommandSigningInfo(keyChain, keyChain.getDefaultCertificateName());
             } catch (SecurityException e) {
                 m_retVal = "ERROR: " + e.getMessage();
                 e.printStackTrace();
                 return m_retVal;
             }
 
-            Name base_name = new Name(mChronoSync.getNDN().getmApplicationNamePrefix());
+            Name base_name = new Name(mChronoSyncManager.getNDN().getmApplicationNamePrefix());
 
             insert(base_name);
             return m_retVal;
@@ -100,7 +100,7 @@ public class RegisterPrefix extends Observable {
 
             try {
                 // Register the prefix
-                mChronoSync.getNDN().getFace().registerPrefix(base_name, new OnInterestCallback() {
+                mChronoSyncManager.getNDN().getFace().registerPrefix(base_name, new OnInterestCallback() {
                     @Override
 
                     public void onInterest(Name prefix, Interest interest, Face face, long interestFilterId, InterestFilter filter) {
@@ -114,8 +114,8 @@ public class RegisterPrefix extends Observable {
                         Data data = new Data();
                         data.setName(new Name(interestName));
                         Blob blob;
-                        if (mChronoSync.getDataHistory().size() > comp) {
-                            blob = new Blob(mChronoSync.getDataHistory().get(comp).getBytes());
+                        if (mChronoSyncManager.getDataHistory().size() > comp) {
+                            blob = new Blob(mChronoSyncManager.getDataHistory().get(comp).getBytes());
                             data.setContent(blob);
                         } else {
                             return;
@@ -152,9 +152,9 @@ public class RegisterPrefix extends Observable {
                 // If error, end the activity
                 Log.d(TAG, "Error Register Prefix Task");
             } else {
-                // Start task to register with ChronoSync
+                // Start task to register with ChronoSyncManager
                 Log.d(TAG, "Register Prefix Task ended (onPostExecute)");
-                Log.d(TAG, "About to trigger Register ChronoSync");
+                Log.d(TAG, "About to trigger Register ChronoSyncManager");
                 setChanged();
                 notifyObservers();
                 //new RegisterChronoSyncTask(ndnActivity).execute();
