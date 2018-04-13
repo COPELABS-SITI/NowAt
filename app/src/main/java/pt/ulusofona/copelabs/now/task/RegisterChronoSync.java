@@ -130,6 +130,11 @@ public class RegisterChronoSync extends Observable {
 
         }
 
+        /**
+         * This method is called when the task ends and start a thread to check for new
+         * events in the face.
+         * @param aVoid
+         */
         @Override
         protected void onPostExecute(Void aVoid) {
             // Start the long running thread that keeps processing the events on the face every
@@ -193,6 +198,11 @@ public class RegisterChronoSync extends Observable {
             }
         }
 
+        /**
+         * This method is called when there is a new Syncsatate
+         * @param syncStates new syncstate
+         * @param isRecovery recovery
+         */
         @Override
         public void onReceivedSyncState(List syncStates, boolean isRecovery) {
             for (Object syncStateOb : syncStates) {
@@ -230,8 +240,6 @@ public class RegisterChronoSync extends Observable {
                         highestSeq++;
                         while (highestSeq <= syncSeq) {
                             setValue(syncPrefix+"/"+highestSeq);
-
-                            //new FetchChanges(mChronoSinc, syncPrefix + "/" + highestSeq);
                             highestSeq++;
                         }
                         mChronoSinc.getHighestRequested().put(syncPrefix, syncSeq);
@@ -242,15 +250,14 @@ public class RegisterChronoSync extends Observable {
                 String syncNameStr = syncPrefix + "/" + syncSeq;
                 Log.d(TAG, "SYNC: " + syncNameStr + " (is Recovery: " + isRecovery + ")");
                 setValue(syncNameStr);
-                //new FetchChanges(mChronoSinc, syncNameStr);
-
             }
-
-
         }
     }
 
-
+    /**
+     * Function used to notify the observers.
+     * @param syncNameStr
+     */
     public void setValue(String syncNameStr){
         setChanged();
         notifyObservers(syncNameStr);
